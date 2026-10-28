@@ -1,0 +1,34 @@
+{
+ "doctype": "DocType",
+ "name": "Register School Days",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "school",
+   "fieldtype": "Link",
+   "label": "School",
+   "reqd": 1,
+   "in_list_view": 1,
+   "options": "Trust School"
+  },
+  {
+   "fieldname": "working_days",
+   "fieldtype": "Int",
+   "label": "Days school ran",
+   "reqd": 1,
+   "in_list_view": 1
+  }
+ ],
+ "permissions": [],
+ "field_order": [
+  "school",
+  "working_days"
+ ],
+ "istable": 1
+}

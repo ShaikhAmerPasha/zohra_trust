@@ -1,0 +1,98 @@
+[
+ {
+  "doctype": "Custom Field",
+  "name": "Item-custom_on_food_statement",
+  "dt": "Item",
+  "fieldname": "custom_on_food_statement",
+  "fieldtype": "Check",
+  "label": "On Food Statement",
+  "insert_after": "disabled",
+  "module": "Trust Operations",
+  "description": "Appears on the Food Expenditure Statement"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Item-custom_statement_order",
+  "dt": "Item",
+  "fieldname": "custom_statement_order",
+  "fieldtype": "Int",
+  "label": "Statement Order",
+  "insert_after": "custom_on_food_statement",
+  "module": "Trust Operations",
+  "description": "Row number on the sheet",
+  "depends_on": "custom_on_food_statement"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Account-custom_on_food_statement",
+  "dt": "Account",
+  "fieldname": "custom_on_food_statement",
+  "fieldtype": "Check",
+  "label": "On Food Statement",
+  "insert_after": "account_type",
+  "module": "Trust Operations",
+  "description": "Amount-only row on the Food Expenditure Statement"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Account-custom_statement_order",
+  "dt": "Account",
+  "fieldname": "custom_statement_order",
+  "fieldtype": "Int",
+  "label": "Statement Order",
+  "insert_after": "custom_on_food_statement",
+  "module": "Trust Operations",
+  "description": "Row number on the sheet",
+  "depends_on": "custom_on_food_statement"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Account-custom_rp_head_in",
+  "dt": "Account",
+  "fieldname": "custom_rp_head_in",
+  "fieldtype": "Data",
+  "label": "R&P Head (In)",
+  "insert_after": "custom_statement_order",
+  "module": "Trust Operations",
+  "description": "Receipts and Payments row when money comes in"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Account-custom_rp_head_out",
+  "dt": "Account",
+  "fieldname": "custom_rp_head_out",
+  "fieldtype": "Data",
+  "label": "R&P Head (Out)",
+  "insert_after": "custom_rp_head_in",
+  "module": "Trust Operations",
+  "description": "Receipts and Payments row when money goes out"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Stock Entry-custom_material_consumption",
+  "dt": "Stock Entry",
+  "fieldname": "custom_material_consumption",
+  "fieldtype": "Link",
+  "label": "Material Consumption",
+  "insert_after": "stock_entry_type",
+  "module": "Trust Operations",
+  "options": "Material Consumption",
+  "read_only": 1,
+  "no_copy": 1,
+  "print_hide": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Journal Entry-custom_cash_bank_voucher",
+  "dt": "Journal Entry",
+  "fieldname": "custom_cash_bank_voucher",
+  "fieldtype": "Link",
+  "label": "Cash Bank Voucher",
+  "insert_after": "voucher_type",
+  "module": "Trust Operations",
+  "options": "Cash Bank Voucher",
+  "read_only": 1,
+  "no_copy": 1,
+  "print_hide": 1
+ }
+]

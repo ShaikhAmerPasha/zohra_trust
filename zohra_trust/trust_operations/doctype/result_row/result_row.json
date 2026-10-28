@@ -1,0 +1,106 @@
+{
+ "doctype": "DocType",
+ "name": "Result Row",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "enrollment",
+   "fieldtype": "Link",
+   "label": "Enrollment",
+   "reqd": 1,
+   "search_index": 1,
+   "in_list_view": 1,
+   "options": "Student Enrollment"
+  },
+  {
+   "fieldname": "register_sl_no",
+   "fieldtype": "Int",
+   "label": "SL. NO",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "NAME & FATHER NAME",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "guardian_name",
+   "fieldtype": "Data",
+   "label": "Father / Guardian Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "trust_class",
+   "fieldtype": "Link",
+   "label": "CLASS",
+   "read_only": 1,
+   "in_list_view": 1,
+   "options": "Trust Class"
+  },
+  {
+   "fieldname": "school",
+   "fieldtype": "Link",
+   "label": "School",
+   "read_only": 1,
+   "options": "Trust School"
+  },
+  {
+   "fieldname": "max_marks",
+   "fieldtype": "Int",
+   "label": "TOTAL MARKS",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "marks_obtained",
+   "fieldtype": "Int",
+   "label": "MARKS OBTAINED",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "result",
+   "fieldtype": "Select",
+   "label": "RESULT",
+   "in_list_view": 1,
+   "options": "\nPass\nFail\nAbsent"
+  },
+  {
+   "fieldname": "promotion_action",
+   "fieldtype": "Select",
+   "label": "Promotion Action",
+   "in_list_view": 1,
+   "options": "\nPromote\nRepeat\nComplete\nLeave"
+  },
+  {
+   "fieldname": "leaving_destination",
+   "fieldtype": "Select",
+   "label": "Leaving Destination",
+   "options": "\nZohra Trust care\nWorking women hostel\nOther",
+   "depends_on": "eval:doc.promotion_action=='Complete' || doc.promotion_action=='Leave'"
+  }
+ ],
+ "permissions": [],
+ "field_order": [
+  "enrollment",
+  "register_sl_no",
+  "student_name",
+  "guardian_name",
+  "trust_class",
+  "school",
+  "max_marks",
+  "marks_obtained",
+  "result",
+  "promotion_action",
+  "leaving_destination"
+ ],
+ "istable": 1
+}

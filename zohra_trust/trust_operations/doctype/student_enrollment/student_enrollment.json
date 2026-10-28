@@ -1,0 +1,155 @@
+{
+ "doctype": "DocType",
+ "name": "Student Enrollment",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "label": "Student",
+   "reqd": 1,
+   "search_index": 1,
+   "in_standard_filter": 1,
+   "options": "Trust Student"
+  },
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "read_only": 1,
+   "in_list_view": 1,
+   "fetch_from": "student.student_name"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "reqd": 1,
+   "search_index": 1,
+   "in_standard_filter": 1,
+   "options": "Trust Academic Year"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "reqd": 1,
+   "search_index": 1,
+   "in_standard_filter": 1,
+   "options": "Company"
+  },
+  {
+   "fieldname": "school",
+   "fieldtype": "Link",
+   "label": "School",
+   "reqd": 1,
+   "in_list_view": 1,
+   "options": "Trust School"
+  },
+  {
+   "fieldname": "trust_class",
+   "fieldtype": "Link",
+   "label": "Trust Class",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Trust Class"
+  },
+  {
+   "fieldname": "register_sl_no",
+   "fieldtype": "Int",
+   "label": "Register Sl No",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Unique within unit and year"
+  },
+  {
+   "fieldname": "enrollment_date",
+   "fieldtype": "Date",
+   "label": "Enrollment Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Planned\nEnrolled\nLeft\nCompleted",
+   "default": "Enrolled",
+   "description": "Changes only at a year boundary. Planned holds a seat for next year"
+  },
+  {
+   "fieldname": "is_repeating",
+   "fieldtype": "Check",
+   "label": "Is Repeating",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "previous_enrollment",
+   "fieldtype": "Link",
+   "label": "Previous Enrollment",
+   "read_only": 1,
+   "options": "Student Enrollment",
+   "no_copy": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Principal",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "if_owner": 1
+  },
+  {
+   "role": "Store",
+   "read": 1,
+   "permlevel": 0
+  }
+ ],
+ "field_order": [
+  "student",
+  "student_name",
+  "academic_year",
+  "unit",
+  "school",
+  "trust_class",
+  "register_sl_no",
+  "enrollment_date",
+  "status",
+  "is_repeating",
+  "previous_enrollment"
+ ],
+ "title_field": "student_name",
+ "search_fields": "student_name,trust_class",
+ "show_title_field_in_link": 1
+}

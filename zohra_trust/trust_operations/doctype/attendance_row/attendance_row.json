@@ -1,0 +1,94 @@
+{
+ "doctype": "DocType",
+ "name": "Attendance Row",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "enrollment",
+   "fieldtype": "Link",
+   "label": "Enrollment",
+   "reqd": 1,
+   "search_index": 1,
+   "in_list_view": 1,
+   "options": "Student Enrollment"
+  },
+  {
+   "fieldname": "register_sl_no",
+   "fieldtype": "Int",
+   "label": "Sl. No.",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "trust_class",
+   "fieldtype": "Link",
+   "label": "Trust Class",
+   "read_only": 1,
+   "options": "Trust Class"
+  },
+  {
+   "fieldname": "school",
+   "fieldtype": "Link",
+   "label": "School",
+   "read_only": 1,
+   "options": "Trust School"
+  },
+  {
+   "fieldname": "school_working_days",
+   "fieldtype": "Int",
+   "label": "School Working Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "school_days_present",
+   "fieldtype": "Int",
+   "label": "School attendance",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "hostel_days",
+   "fieldtype": "Int",
+   "label": "Hostel attendance",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "grant_amount",
+   "fieldtype": "Currency",
+   "label": "Grant Amount",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "absence_reason",
+   "fieldtype": "Small Text",
+   "label": "Reasons for absence"
+  }
+ ],
+ "permissions": [],
+ "field_order": [
+  "enrollment",
+  "register_sl_no",
+  "student_name",
+  "trust_class",
+  "school",
+  "school_working_days",
+  "school_days_present",
+  "hostel_days",
+  "grant_amount",
+  "absence_reason"
+ ],
+ "istable": 1
+}

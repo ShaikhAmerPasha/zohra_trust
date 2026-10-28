@@ -1,0 +1,78 @@
+{
+ "doctype": "DocType",
+ "name": "Trust School",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "school_name",
+   "fieldtype": "Data",
+   "label": "School Name",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "medium",
+   "fieldtype": "Select",
+   "label": "Medium",
+   "reqd": 1,
+   "in_list_view": 1,
+   "options": "\nEnglish\nKannada"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "description": "Only if the school keeps its own books later"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "default": "1"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Principal",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Store",
+   "read": 1,
+   "permlevel": 0
+  }
+ ],
+ "field_order": [
+  "school_name",
+  "medium",
+  "company",
+  "is_active"
+ ],
+ "autoname": "field:school_name",
+ "naming_rule": "By fieldname"
+}

@@ -1,0 +1,304 @@
+[
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-purchase-invoice-data-entry-0",
+  "parent": "Purchase Invoice",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-purchase-invoice-data-entry-1",
+  "parent": "Purchase Invoice",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1,
+  "write": 1,
+  "create": 1,
+  "submit": 1,
+  "cancel": 1,
+  "amend": 1,
+  "if_owner": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-item-data-entry-2",
+  "parent": "Item",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-item-group-data-entry-3",
+  "parent": "Item Group",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-uom-data-entry-4",
+  "parent": "UOM",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-warehouse-data-entry-5",
+  "parent": "Warehouse",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-supplier-data-entry-6",
+  "parent": "Supplier",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-supplier-group-data-entry-7",
+  "parent": "Supplier Group",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-account-data-entry-8",
+  "parent": "Account",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-cost-center-data-entry-9",
+  "parent": "Cost Center",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-company-data-entry-10",
+  "parent": "Company",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-mode-of-payment-data-entry-11",
+  "parent": "Mode of Payment",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-fiscal-year-data-entry-12",
+  "parent": "Fiscal Year",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-purchase-invoice-store-13",
+  "parent": "Purchase Invoice",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-purchase-invoice-store-14",
+  "parent": "Purchase Invoice",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1,
+  "write": 1,
+  "create": 1,
+  "submit": 1,
+  "cancel": 1,
+  "amend": 1,
+  "if_owner": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-item-store-15",
+  "parent": "Item",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-item-group-store-16",
+  "parent": "Item Group",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-uom-store-17",
+  "parent": "UOM",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-warehouse-store-18",
+  "parent": "Warehouse",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-supplier-store-19",
+  "parent": "Supplier",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-supplier-group-store-20",
+  "parent": "Supplier Group",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-account-store-21",
+  "parent": "Account",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-cost-center-store-22",
+  "parent": "Cost Center",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-company-store-23",
+  "parent": "Company",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-mode-of-payment-store-24",
+  "parent": "Mode of Payment",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-fiscal-year-store-25",
+  "parent": "Fiscal Year",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Store",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-bank-account-data-entry-26",
+  "parent": "Bank Account",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-employee-data-entry-27",
+  "parent": "Employee",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-journal-entry-data-entry-28",
+  "parent": "Journal Entry",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Data Entry",
+  "permlevel": 0,
+  "read": 1
+ }
+]

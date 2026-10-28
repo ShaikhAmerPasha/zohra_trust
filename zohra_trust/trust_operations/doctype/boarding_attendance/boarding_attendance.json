@@ -1,0 +1,212 @@
+{
+ "doctype": "DocType",
+ "name": "Boarding Attendance",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Company"
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "January\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Int",
+   "label": "Year",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "read_only": 1,
+   "options": "Trust Academic Year"
+  },
+  {
+   "fieldname": "period_start",
+   "fieldtype": "Date",
+   "label": "Period Start",
+   "read_only": 1
+  },
+  {
+   "fieldname": "period_end",
+   "fieldtype": "Date",
+   "label": "Period End",
+   "read_only": 1
+  },
+  {
+   "fieldname": "calendar_days",
+   "fieldtype": "Int",
+   "label": "Calendar Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_s",
+   "fieldtype": "Section Break",
+   "label": "Sanction in force"
+  },
+  {
+   "fieldname": "sanctioned_strength",
+   "fieldtype": "Int",
+   "label": "Sanction strength",
+   "read_only": 1
+  },
+  {
+   "fieldname": "grant_rate",
+   "fieldtype": "Currency",
+   "label": "Grant Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "grant_rule",
+   "fieldtype": "Select",
+   "label": "Grant Rule",
+   "read_only": 1,
+   "options": "\nFull month per student\nPro-rata by hostel days\nPer day"
+  },
+  {
+   "fieldname": "sb_sd",
+   "fieldtype": "Section Break",
+   "label": "School working days"
+  },
+  {
+   "fieldname": "school_days",
+   "fieldtype": "Table",
+   "label": "School Days",
+   "options": "Register School Days"
+  },
+  {
+   "fieldname": "sb_r",
+   "fieldtype": "Section Break",
+   "label": "Girls"
+  },
+  {
+   "fieldname": "rows",
+   "fieldtype": "Table",
+   "label": "Rows",
+   "options": "Attendance Row"
+  },
+  {
+   "fieldname": "sb_t",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "students_on_roll",
+   "fieldtype": "Int",
+   "label": "Students On Roll",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_hostel_days",
+   "fieldtype": "Int",
+   "label": "Hostel attendance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_school_days_present",
+   "fieldtype": "Int",
+   "label": "School attendance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_grant",
+   "fieldtype": "Currency",
+   "label": "Total Grant",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Boarding Attendance",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Principal",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "if_owner": 1
+  }
+ ],
+ "field_order": [
+  "company",
+  "month",
+  "year",
+  "academic_year",
+  "period_start",
+  "period_end",
+  "calendar_days",
+  "sb_s",
+  "sanctioned_strength",
+  "grant_rate",
+  "grant_rule",
+  "sb_sd",
+  "school_days",
+  "sb_r",
+  "rows",
+  "sb_t",
+  "students_on_roll",
+  "total_hostel_days",
+  "total_school_days_present",
+  "total_grant",
+  "amended_from"
+ ],
+ "is_submittable": 1,
+ "search_fields": "company,month,year"
+}

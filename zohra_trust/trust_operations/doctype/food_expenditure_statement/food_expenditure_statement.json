@@ -1,0 +1,204 @@
+{
+ "doctype": "DocType",
+ "name": "Food Expenditure Statement",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Company"
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "January\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Int",
+   "label": "Year",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "period_start",
+   "fieldtype": "Date",
+   "label": "Period Start",
+   "read_only": 1
+  },
+  {
+   "fieldname": "period_end",
+   "fieldtype": "Date",
+   "label": "Period End",
+   "read_only": 1
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "read_only": 1,
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "is_opening",
+   "fieldtype": "Check",
+   "label": "Is Opening",
+   "description": "First statement only"
+  },
+  {
+   "fieldname": "previous_statement",
+   "fieldtype": "Link",
+   "label": "Previous Statement",
+   "read_only": 1,
+   "options": "Food Expenditure Statement",
+   "no_copy": 1,
+   "description": "The last submitted one, whatever the month"
+  },
+  {
+   "fieldname": "sb_l",
+   "fieldtype": "Section Break",
+   "label": "Lines"
+  },
+  {
+   "fieldname": "lines",
+   "fieldtype": "Table",
+   "label": "Lines",
+   "options": "Food Expenditure Statement Line"
+  },
+  {
+   "fieldname": "sb_t",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "total_opening",
+   "fieldtype": "Currency",
+   "label": "Opening balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_purchase",
+   "fieldtype": "Currency",
+   "label": "Monthly purchase",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_available",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_expenditure",
+   "fieldtype": "Currency",
+   "label": "Monthly expenditure",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_closing",
+   "fieldtype": "Currency",
+   "label": "Remaining balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Food Expenditure Statement",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Principal",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "if_owner": 1
+  },
+  {
+   "role": "Store",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Store",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "if_owner": 1
+  }
+ ],
+ "field_order": [
+  "company",
+  "month",
+  "year",
+  "period_start",
+  "period_end",
+  "warehouse",
+  "is_opening",
+  "previous_statement",
+  "sb_l",
+  "lines",
+  "sb_t",
+  "total_opening",
+  "total_purchase",
+  "total_available",
+  "total_expenditure",
+  "total_closing",
+  "amended_from"
+ ],
+ "is_submittable": 1,
+ "search_fields": "company,month,year"
+}

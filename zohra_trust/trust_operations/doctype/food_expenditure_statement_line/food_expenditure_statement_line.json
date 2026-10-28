@@ -1,0 +1,138 @@
+{
+ "doctype": "DocType",
+ "name": "Food Expenditure Statement Line",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "line_type",
+   "fieldtype": "Select",
+   "label": "Line Type",
+   "read_only": 1,
+   "options": "Item\nExpense Head"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Name of food grains",
+   "in_list_view": 1,
+   "options": "Item"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "in_list_view": 1,
+   "options": "Account"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "Uom",
+   "read_only": 1,
+   "options": "UOM"
+  },
+  {
+   "fieldname": "old_qty",
+   "fieldtype": "Float",
+   "label": "Old balance: Quantity",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "old_rate",
+   "fieldtype": "Currency",
+   "label": "Old balance: Rate /kg"
+  },
+  {
+   "fieldname": "old_amount",
+   "fieldtype": "Currency",
+   "label": "Old balance: Amount (\u20b9)",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "purchased_qty",
+   "fieldtype": "Float",
+   "label": "Purchased during the month: Quantity",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "purchased_rate",
+   "fieldtype": "Currency",
+   "label": "Purchased during the month: Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purchased_amount",
+   "fieldtype": "Currency",
+   "label": "Purchased during the month: Amount (\u20b9)",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "label": "Total: Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total: Amount (\u20b9)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "consumed_qty",
+   "fieldtype": "Float",
+   "label": "Expenditure: Quantity",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "expenditure_amount",
+   "fieldtype": "Currency",
+   "label": "Expenditure: Amount (\u20b9)",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "balance_qty",
+   "fieldtype": "Float",
+   "label": "Balance: Quantity",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "balance_amount",
+   "fieldtype": "Currency",
+   "label": "Balance: Amount (\u20b9)",
+   "read_only": 1,
+   "in_list_view": 1
+  }
+ ],
+ "permissions": [],
+ "field_order": [
+  "line_type",
+  "item_code",
+  "account",
+  "uom",
+  "old_qty",
+  "old_rate",
+  "old_amount",
+  "purchased_qty",
+  "purchased_rate",
+  "purchased_amount",
+  "total_qty",
+  "total_amount",
+  "consumed_qty",
+  "expenditure_amount",
+  "balance_qty",
+  "balance_amount"
+ ],
+ "istable": 1
+}

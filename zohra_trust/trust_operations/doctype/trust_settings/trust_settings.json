@@ -1,0 +1,82 @@
+{
+ "doctype": "DocType",
+ "name": "Trust Settings",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "trust_name",
+   "fieldtype": "Data",
+   "label": "Trust Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "registration_no",
+   "fieldtype": "Data",
+   "label": "Registration No"
+  },
+  {
+   "fieldname": "current_academic_year",
+   "fieldtype": "Link",
+   "label": "Current Academic Year",
+   "options": "Trust Academic Year",
+   "description": "Default for new enrollments"
+  },
+  {
+   "fieldname": "correction_window_days",
+   "fieldtype": "Int",
+   "label": "Correction Window Days",
+   "default": "1",
+   "description": "Days a user may still cancel or amend their own entry"
+  },
+  {
+   "fieldname": "sb_ob",
+   "fieldtype": "Section Break",
+   "label": "Officer Bearers"
+  },
+  {
+   "fieldname": "officer_bearers",
+   "fieldtype": "Table",
+   "label": "Officer Bearers",
+   "options": "Officer Bearer"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1
+  },
+  {
+   "role": "Principal",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Store",
+   "read": 1,
+   "permlevel": 0
+  }
+ ],
+ "field_order": [
+  "trust_name",
+  "registration_no",
+  "current_academic_year",
+  "correction_window_days",
+  "sb_ob",
+  "officer_bearers"
+ ],
+ "issingle": 1
+}

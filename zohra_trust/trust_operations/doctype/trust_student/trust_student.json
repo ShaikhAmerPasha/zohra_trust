@@ -1,0 +1,129 @@
+{
+ "doctype": "DocType",
+ "name": "Trust Student",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "home_unit",
+   "fieldtype": "Link",
+   "label": "Home Unit",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Company"
+  },
+  {
+   "fieldname": "admission_date",
+   "fieldtype": "Date",
+   "label": "Admission Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Active\nLeft\nPassed Out",
+   "default": "Active"
+  },
+  {
+   "fieldname": "leaving_date",
+   "fieldtype": "Date",
+   "label": "Leaving Date",
+   "depends_on": "eval:doc.status!='Active'",
+   "mandatory_depends_on": "eval:doc.status!='Active'",
+   "description": "Girls leave only at the start or end of an academic year"
+  },
+  {
+   "fieldname": "leaving_reason",
+   "fieldtype": "Small Text",
+   "label": "Leaving Reason",
+   "depends_on": "eval:doc.status!='Active'"
+  },
+  {
+   "fieldname": "leaving_destination",
+   "fieldtype": "Select",
+   "label": "Leaving Destination",
+   "options": "\nZohra Trust care\nWorking women hostel\nOther",
+   "depends_on": "eval:doc.status=='Left' || doc.status=='Passed Out'",
+   "description": "After class 10"
+  },
+  {
+   "fieldname": "sb_g",
+   "fieldtype": "Section Break",
+   "label": "Guardian"
+  },
+  {
+   "fieldname": "has_guardian",
+   "fieldtype": "Check",
+   "label": "Has Guardian"
+  },
+  {
+   "fieldname": "guardians",
+   "fieldtype": "Table",
+   "label": "Guardians",
+   "options": "Student Guardian",
+   "depends_on": "has_guardian"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Principal",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Store",
+   "read": 1,
+   "permlevel": 0
+  }
+ ],
+ "field_order": [
+  "student_name",
+  "home_unit",
+  "admission_date",
+  "status",
+  "leaving_date",
+  "leaving_reason",
+  "leaving_destination",
+  "sb_g",
+  "has_guardian",
+  "guardians"
+ ],
+ "autoname": "STU-.#####",
+ "naming_rule": "Expression (old style)",
+ "title_field": "student_name",
+ "show_title_field_in_link": 1,
+ "search_fields": "student_name,home_unit"
+}

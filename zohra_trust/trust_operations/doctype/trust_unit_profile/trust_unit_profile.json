@@ -1,0 +1,138 @@
+{
+ "doctype": "DocType",
+ "name": "Trust Unit Profile",
+ "module": "Trust Operations",
+ "custom": 0,
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "options": "Company"
+  },
+  {
+   "fieldname": "unit_type",
+   "fieldtype": "Select",
+   "label": "Unit Type",
+   "reqd": 1,
+   "in_list_view": 1,
+   "options": "\nHostel\nDestitute Home\nSchool\nITI\nTrust"
+  },
+  {
+   "fieldname": "sb_t",
+   "fieldtype": "Section Break",
+   "label": "What this unit tracks"
+  },
+  {
+   "fieldname": "tracks_residents",
+   "fieldtype": "Check",
+   "label": "Tracks Residents",
+   "description": "Turns on students, enrollments and Boarding Attendance"
+  },
+  {
+   "fieldname": "tracks_food_statement",
+   "fieldtype": "Check",
+   "label": "Tracks Food Statement",
+   "description": "Turns on the Food Expenditure Statement"
+  },
+  {
+   "fieldname": "tracks_results",
+   "fieldtype": "Check",
+   "label": "Tracks Results",
+   "description": "Turns on the Result Sheet of Inmates"
+  },
+  {
+   "fieldname": "ration_warehouse",
+   "fieldtype": "Link",
+   "label": "Ration Warehouse",
+   "options": "Warehouse",
+   "description": "The hostel store"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "sb_s",
+   "fieldtype": "Section Break",
+   "label": "Sanctions"
+  },
+  {
+   "fieldname": "sanctions",
+   "fieldtype": "Table",
+   "label": "Sanctions",
+   "options": "Unit Sanction"
+  },
+  {
+   "fieldname": "sb_x",
+   "fieldtype": "Section Break",
+   "label": "Typed texts"
+  },
+  {
+   "fieldname": "letter_text",
+   "fieldtype": "Text Editor",
+   "label": "Letter Text",
+   "description": "Cover letter text; typed once"
+  },
+  {
+   "fieldname": "appendix_h_text",
+   "fieldtype": "Text Editor",
+   "label": "Appendix H Text",
+   "description": "Appendix \u2013 H; free text the user types and edits"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Principal",
+   "read": 1,
+   "permlevel": 0,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Data Entry",
+   "read": 1,
+   "permlevel": 0
+  },
+  {
+   "role": "Store",
+   "read": 1,
+   "permlevel": 0
+  }
+ ],
+ "field_order": [
+  "company",
+  "unit_type",
+  "sb_t",
+  "tracks_residents",
+  "tracks_food_statement",
+  "tracks_results",
+  "ration_warehouse",
+  "address",
+  "sb_s",
+  "sanctions",
+  "sb_x",
+  "letter_text",
+  "appendix_h_text"
+ ],
+ "autoname": "field:company",
+ "naming_rule": "By fieldname"
+}
