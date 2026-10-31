@@ -1,5 +1,7 @@
 frappe.ui.form.on("Material Consumption", {
 	setup(frm) {
+		// The Stock Entry is cancelled by this document's own on_cancel, so Cancel All must not list it
+		frm.ignore_doctypes_on_cancel_all = ["Stock Entry"];
 		frm.set_query("item_code", "items", () => ({ filters: { custom_on_food_statement: 1, disabled: 0 } }));
 	},
 	refresh(frm) {

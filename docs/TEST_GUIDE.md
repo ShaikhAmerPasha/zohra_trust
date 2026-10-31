@@ -19,7 +19,8 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 | 3: Cash Bank Voucher, Receipts and Payments | 9 | 9 | 5/5 (flow phase 3) |
 | 5: Result Sheet, promotion, Left with T.C., seed_classes, patch | 13 | 13 | 5/5 (flow phase 5) |
 | Schema repair after migrate | 1 | 1 | n/a |
-| Whole suite now | 50 | 50 | 21/21 including cleanup |
+| Cancel from the screen (Material Consumption, Cash Bank Voucher) | 5 | 5 | n/a |
+| Whole suite now | 56 | 56 | 21/21 including cleanup |
 
 ## Slice 1 tests (`tests/test_slice1.py`)
 
@@ -79,6 +80,13 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 - `tests/test_schema.py`: drops `Address.is_your_company_address`, runs the repair, expects the column back.
 - `test_slice2`: Copy Yesterday also returns item name and unit.
 - `test_slice3`: every Receipts and Payments row has null (not missing) in the empty cell.
+
+## Cancel from the screen (`tests/test_cancel_screen.py`)
+
+- The forms declare `frm.ignore_doctypes_on_cancel_all` (Stock Entry for Material Consumption, Journal Entry for Cash Bank Voucher); the test reads the list from the form's JS file.
+- Reproduces the cause: `get_submitted_linked_docs` lists the linked entry and `cancel_all_linked_docs` on it is refused. With the declared list the dialog has nothing to offer.
+- `frappe.desk.form.save.cancel` (what the form calls) cancels the consumption and its Stock Entry, restoring the Bin, and the voucher and its Journal Entry, removing the GL entries.
+- A Journal Entry made by a voucher still cannot be cancelled directly.
 
 ## Flow check (`tests/flow.py`)
 
