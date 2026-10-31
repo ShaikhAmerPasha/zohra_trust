@@ -21,7 +21,8 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 | Schema repair after migrate | 1 | 1 | n/a |
 | Cancel from the screen (Material Consumption, Cash Bank Voucher) | 5 | 5 | n/a |
 | 4a: generated report pages | 14 | 14 | n/a |
-| Whole suite now | 70 | 70 | 21/21 including cleanup |
+| 4b: Report Pack, page list, merged PDF | 9 | 9 | n/a |
+| Whole suite now | 79 | 79 | 21/21 including cleanup |
 
 ## Slice 1 tests (`tests/test_slice1.py`)
 
@@ -98,6 +99,16 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 - Receipts and Payments prints RECEIPTS (not the filed typo), the fixed rows and the report's figures.
 - Abstract sums hostel days per month; food statement header reads "Sanctioned Strength-150 Month-June Year-2026" and is landscape; result sheet has the filed columns with the guardian; staff list comes from Employee with qualification; the register is one page per school and month with the Kannada heading.
 - Every page renders to a PDF with the right orientation. Regression: `wkhtmltopdf` crashed (exit -11) when one text run mixed Kannada and Latin; typed text with both scripts also renders.
+
+## Slice 4b tests (`tests/test_slice4b.py`)
+
+- A new Report Pack (`RPK-.YYYY.-.#####`) lists the nine standard pages in filing order.
+- Refused: To Date before From Date, a page listed twice, an uploaded page without a file or title, an upload that is not PDF, PNG or JPG.
+- `info()` names every page with its month (and school) and returns the warnings.
+- The merged PDF has one PDF page per page, in order, and keeps landscape food statements landscape.
+- A section with Include off is left out; an uploaded PDF goes in at its row and a wide PNG lands on a landscape page; a missing uploaded file is a warning; a section with no data (August) is reported.
+- The two endpoints return the page list and a PDF response.
+- Data for the report page tests is built by `tests/pack_data.py`.
 
 ## Flow check (`tests/flow.py`)
 
