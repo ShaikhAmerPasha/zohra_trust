@@ -1,0 +1,36 @@
+{% extends "zohra_trust/templates/report_pages/base.html" %}
+{% import "zohra_trust/templates/report_pages/letterhead.html" as lh %}
+{% block content %}
+{{ lh.frame_open(ctx) }}
+<h2>{{ ctx.unit_name }}</h2>
+<h3>Receipts and payments account for the period<br>{{ ctx.period }}</h3>
+<table class="grid">
+	<thead><tr><th style="width:50%">RECEIPTS</th><th>PAYMENTS</th></tr></thead>
+	<tbody><tr>
+		<td style="padding:0">
+			<table class="layout">
+				<tr><td colspan="2" style="padding:3px 5px"><b>Opening balance</b></td></tr>
+				<tr><td style="padding:3px 5px 3px 18px">Cash</td><td class="num" style="padding:3px 5px">{{ inr(opening_cash) }}</td></tr>
+				<tr><td style="padding:3px 5px 3px 18px">Bank</td><td class="num" style="padding:3px 5px">{{ inr(opening_bank) }}</td></tr>
+				{% for label, amount in receipts %}
+				<tr><td style="padding:3px 5px">{{ label }}</td><td class="num" style="padding:3px 5px">{{ inr(amount) if amount else "" }}</td></tr>
+				{% endfor %}
+			</table>
+		</td>
+		<td style="padding:0">
+			<table class="layout">
+				{% for label, amount in payments %}
+				<tr><td style="padding:3px 5px">{{ loop.index }}) {{ label }}</td><td class="num" style="padding:3px 5px">{{ inr(amount) if amount else "" }}</td></tr>
+				{% endfor %}
+				<tr><td colspan="2" style="padding:3px 5px"><b>Closing balance</b></td></tr>
+				<tr><td style="padding:3px 5px 3px 18px">Cash</td><td class="num" style="padding:3px 5px">{{ inr(closing_cash) }}</td></tr>
+				<tr><td style="padding:3px 5px 3px 18px">Bank</td><td class="num" style="padding:3px 5px">{{ inr(closing_bank) }}</td></tr>
+			</table>
+		</td>
+	</tr></tbody>
+	<tfoot><tr><td><table class="layout"><tr><td><b>TOTAL</b></td><td class="num"><b>{{ inr(total_receipts) }}</b></td></tr></table></td>
+		<td><table class="layout"><tr><td><b>TOTAL</b></td><td class="num"><b>{{ inr(total_payments) }}</b></td></tr></table></td></tr></tfoot>
+</table>
+<div class="sign">Secretary</div>
+{{ lh.frame_close() }}
+{% endblock %}

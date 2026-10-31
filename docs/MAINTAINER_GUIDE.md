@@ -63,6 +63,14 @@ Controllers stay small. Logic lives in `utils/`; the controller calls it.
 
 Section 10 labels applied to the DocTypes (`gen` labels such as Sanction strength, Hostel attendance, Name of food grains). Office Bearer became Officer Bearer (patch `rename_officer_bearer`). Account names follow section 4 (Detergent, Salaries, GESCOM, Govt. grant received, Bank interest, Zohra trust). GESCOM's Receipts and Payments head out is "GESCOM". Result Row labels (SL. NO, NAME & FATHER NAME, CLASS, TOTAL MARKS, MARKS OBTAINED, RESULT) are applied.
 
+## Slice 4a: report pages
+
+`utils/report_pages.py` builds the generated pages of the half-yearly report; `templates/report_pages/` holds one Jinja template per page. `build_pages(company, from_date, to_date)` returns the pages in filing order (letter, receipts and payments, abstract, food statements, Appendix – H, officer bearers, staff, result sheet, attendance registers) and a list of warnings for missing months; `to_pdf(html, orientation)` renders one page with `wkhtmltopdf`. Food statements are landscape. The letter text may use `{{ from_date }}`, `{{ to_date }}` and `{{ period }}`. The staff list is the active Employees of the company with their first Employee Education qualification.
+
+**wkhtmltopdf and Kannada.** This build (0.12.6, unpatched Qt) crashes with exit code -11 when one text run mixes Latin and Kannada. `wrap_kannada()` puts every Kannada run in its own span with the Kannada font; `render()` always applies it. Do not bypass `render()`.
+
+Demo data: `demo_data.add_report_extras` (letter, officers, staff, Appendix – H) and `demo_data.pack_preview` (writes each page as a PDF).
+
 ## Change request 1
 
 Left with T.C. replaces Leave (patch `rename_leave_to_left_with_tc`). Trust Student has `tc_number` and `tc_date`. Class Exam Marks has `max_marks_per_subject`, reference only. Marks come from the Trust Class data; `setup/seed_classes.py` only creates the first values. Statement old balances come from real stock. No statement is made for April and May. The diet scale is pending and not built.

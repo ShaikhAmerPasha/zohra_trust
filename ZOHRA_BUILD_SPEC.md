@@ -539,6 +539,8 @@ Show `guardians` only when `has_guardian` is ticked. Show `leaving_destination` 
 - Student Enrollment has the extra status Planned so Promote can save next year's enrollments without taking effect.
 
 - No statement is made for April and May. April's purchases are bought in March and entered as ordinary Purchase Invoices dated in March, so they fall inside March's statement. The kitchen's daily Material Consumption continues all year, and the old balance of every statement is the real stock at the start of its period.
+- Assumption: no Boarding Attendance is expected for April and May either, because the filed abstract starts at June, so the Report Pack does not warn about those two months.
+- Report Pack (slice 4, decided with the product owner): a Report Pack DocType holds the period, the order of pages and uploaded pages (the CA pages, the building plan, signed scans); the Grant Bill is left out until Zohra sends a sample.
 - Assumption: the Mid-term totals per class are the same as the Final totals, until Zohra says otherwise.
 - The grant: the department pays it once every six months, as one receipt. It is ₹850 per student per month, paid in full and not pro-rated, whatever the days stayed. The half-yearly receipt is entered with a Cash Bank Voucher on the account "Govt. grant received". The Grant Bill (later) sums the six months of Boarding Attendance. The grant bill format is still to come from Zohra.
 

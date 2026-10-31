@@ -97,3 +97,60 @@ def add_june_purchases():
 	purchase(ABBR, COMPANY, "2026-06-12", {"Vegetables": (1, 1500)}, stock=False)
 	frappe.db.commit()
 	print("June purchases added.")
+
+
+def add_report_extras():
+	"""Letter text, officer bearers, staff and Appendix – H so the report pages have something to print."""
+	settings = frappe.get_doc("Trust Settings")
+	if not settings.officer_bearers:
+		for order, (name, designation, qualification, phone) in enumerate(
+			(
+				("Tasneem Fatima", "President", "B.A", "9742920793"),
+				("Md. Azam Ali", "Secretary", "B.Com", "9148041585"),
+				("Md. Iqbal Ali", "Joint Secretary", "B.Com", "9845203533"),
+				("Md. Abubaker", "Trustee", "D.Arch", "7019977008"),
+			),
+			1,
+		):
+			settings.append("officer_bearers", {"member_name": name, "designation": designation, "qualification": qualification, "phone": phone, "sort_order": order, "is_active": 1})
+		settings.save()
+	profile = frappe.get_doc("Trust Unit Profile", COMPANY)
+	profile.address = profile.address or "Near Masjid-e-Umar, Old Jewargi Road, Kalaburagi-585102"
+	profile.letter_text = profile.letter_text or (
+		"<p>To,<br>The District Minority Officer,<br>Kalaburagi</p>"
+		"<p><b>Sub: Submission of accounts and necessary papers for the period {{ from_date }} to {{ to_date }} "
+		"towards maintenance grant of Zohra minority girls' hostel.</b></p>"
+		"<p>Dear Sir,<br>With reference to the above we are herewith submitting all the required papers for the release of grant "
+		"towards maintenance of the Hostel. Thanking you.</p><p>Yours faithfully</p>"
+	)
+	profile.appendix_h_text = profile.appendix_h_text or (
+		"<p>1. Name and address of institute/hostel: ZOHRA MINORITY GIRLS HOSTEL, Old Jewargi Road, Gulbarga - 585 102.</p>"
+		"<p>2. Name of Trust: Zohra Women &amp; Children Charitable Welfare Trust</p>"
+		"<p>3. Sanctioned strength at the time of recognition: 150 inmates</p>"
+	)
+	profile.save()
+	for name, designation, qualification in (("Najmunnisa", "House Mother", "B.A"), ("Shaenaz", "House Mother", "PUC"), ("Shakeela", "Cook", "10th")):
+		if not frappe.db.exists("Employee", {"employee_name": name, "company": COMPANY}):
+			emp = frappe.get_doc(
+				{
+					"doctype": "Employee", "first_name": name, "gender": "Female", "date_of_birth": "1990-01-01", "date_of_joining": "2020-01-01",
+					"company": COMPANY, "status": "Active", "designation": designation,
+					"education": [{"qualification": qualification}],
+				}
+			)
+			if not frappe.db.exists("Designation", designation):
+				frappe.get_doc({"doctype": "Designation", "designation_name": designation}).insert()
+			emp.insert()
+	frappe.db.commit()
+	print("Report extras added.")
+
+
+def pack_preview(from_date="2026-04-01", to_date="2026-09-30", folder="/tmp"):
+	"""Write each generated page of the pack as a PDF into folder and print the warnings."""
+	from zohra_trust.utils.report_pages import build_pages, to_pdf
+
+	pages, warnings = build_pages(COMPANY, from_date, to_date)
+	for n, p in enumerate(pages, 1):
+		with open(f"{folder}/page_{n:02d}_{p['key']}.pdf", "wb") as f:
+			f.write(to_pdf(p["html"], p["orientation"]))
+	print(len(pages), "pages;", "warnings:", warnings)

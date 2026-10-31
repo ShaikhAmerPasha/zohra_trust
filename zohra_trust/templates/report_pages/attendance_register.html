@@ -1,0 +1,19 @@
+{% extends "zohra_trust/templates/report_pages/base.html" %}
+{% block content %}
+<h2 style="text-decoration: underline">ಶಾಲೆ: ಕಾಲೇಜು ಹಾಜರಾತಿ ನೊಂದಣಿ</h2>
+<h3>School: College attendance register</h3>
+<p>ಶಾಲೆ / ಕಾಲೇಜು ಹೆಸರು (School: College): <b>{{ school }}</b> &nbsp;&nbsp; ತಿಂಗಳು (Month): <b>{{ month }} {{ year }}</b></p>
+<table class="grid">
+	<thead><tr>
+		<th>ಕ್ರ.ಸಂ.<br>Sl. No.</th><th>ವಿದ್ಯಾರ್ಥಿನಿ ಹೆಸರು<br>Name</th><th>ತರಗತಿ<br>Class</th>
+		<th>ಶಾಲೆ ನಡೆದ ದಿನಗಳು<br>Days school ran</th><th>ಹಾಜರಾದ ದಿನಗಳು<br>School attendance</th><th>ಗೈರುಹಾಜರಿಗೆ ಕಾರಣಗಳು<br>Reasons for absence</th>
+	</tr></thead>
+	<tbody>
+	{% for r in rows %}
+		<tr><td class="center">{{ loop.index }}.</td><td>{{ r.student_name }}</td><td class="center">{{ r.trust_class.replace("Class ", "") }}</td>
+			<td class="center">{{ r.school_working_days }}</td><td class="center">{{ r.school_days_present }}</td><td>{{ r.absence_reason or "—" }}</td></tr>
+	{% endfor %}
+	</tbody>
+</table>
+<div class="sign">Principal<br>{{ school }}</div>
+{% endblock %}

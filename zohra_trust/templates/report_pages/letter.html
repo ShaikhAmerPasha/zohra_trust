@@ -1,0 +1,10 @@
+{% extends "zohra_trust/templates/report_pages/base.html" %}
+{% import "zohra_trust/templates/report_pages/letterhead.html" as lh %}
+{% block content %}
+{{ lh.frame_open(ctx) }}
+<div>{{ body }}</div>
+<p><b>Enclosures</b></p>
+<ol>{% for e in enclosures %}<li>{{ e }}</li>{% endfor %}</ol>
+<div class="sign">Secretary</div>
+{{ lh.frame_close() }}
+{% endblock %}

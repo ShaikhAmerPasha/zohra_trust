@@ -20,7 +20,8 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 | 5: Result Sheet, promotion, Left with T.C., seed_classes, patch | 13 | 13 | 5/5 (flow phase 5) |
 | Schema repair after migrate | 1 | 1 | n/a |
 | Cancel from the screen (Material Consumption, Cash Bank Voucher) | 5 | 5 | n/a |
-| Whole suite now | 56 | 56 | 21/21 including cleanup |
+| 4a: generated report pages | 14 | 14 | n/a |
+| Whole suite now | 70 | 70 | 21/21 including cleanup |
 
 ## Slice 1 tests (`tests/test_slice1.py`)
 
@@ -87,6 +88,16 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 - Reproduces the cause: `get_submitted_linked_docs` lists the linked entry and `cancel_all_linked_docs` on it is refused. With the declared list the dialog has nothing to offer.
 - `frappe.desk.form.save.cancel` (what the form calls) cancels the consumption and its Stock Entry, restoring the Bin, and the voucher and its Journal Entry, removing the GL entries.
 - A Journal Entry made by a voucher still cannot be cancelled directly.
+
+## Slice 4a tests (`tests/test_slice4a.py`)
+
+- Indian digit grouping (12,30,000; 6,34,446.84), quantities without trailing zeros.
+- `wrap_kannada` puts each Kannada run in its own span and leaves attributes, CSS and the title alone.
+- Pages come in filing order; warnings skip April and May and name real gaps (August food statement, September attendance).
+- Letter prints the typed text with the period filled in, the seven enclosures, active officer bearers only and the registration number.
+- Receipts and Payments prints RECEIPTS (not the filed typo), the fixed rows and the report's figures.
+- Abstract sums hostel days per month; food statement header reads "Sanctioned Strength-150 Month-June Year-2026" and is landscape; result sheet has the filed columns with the guardian; staff list comes from Employee with qualification; the register is one page per school and month with the Kannada heading.
+- Every page renders to a PDF with the right orientation. Regression: `wkhtmltopdf` crashed (exit -11) when one text run mixed Kannada and Latin; typed text with both scripts also renders.
 
 ## Flow check (`tests/flow.py`)
 

@@ -1,0 +1,22 @@
+{% macro head(ctx) %}
+<div class="letterhead">
+	<div class="trust">{{ ctx.trust_name }}</div>
+	<div>{{ ctx.address }}</div>
+	{% if ctx.registration_no %}<div class="small">(Registered under Registration Act. Registration No. {{ ctx.registration_no }})</div>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro officers(ctx) %}
+{% for o in ctx.officers %}
+<div class="block">
+	<div class="name">{{ o.member_name }}</div>
+	{% if o.qualification %}<div>{{ o.qualification }}</div>{% endif %}
+	{% if o.phone %}<div>Ph No: {{ o.phone }}</div>{% endif %}
+	<div>{{ o.designation }}</div>
+</div>
+{% endfor %}
+{% endmacro %}
+
+{# a page with the officer bearers down the left, as on the filed letterhead pages #}
+{% macro frame_open(ctx) %}{{ head(ctx) }}<table class="layout"><tr><td class="side">{{ officers(ctx) }}</td><td>{% endmacro %}
+{% macro frame_close() %}</td></tr></table>{% endmacro %}

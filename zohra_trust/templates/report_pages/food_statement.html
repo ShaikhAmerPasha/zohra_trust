@@ -1,0 +1,33 @@
+{% extends "zohra_trust/templates/report_pages/base.html" %}
+{% block content %}
+<style>body { font-size: 10px; } table.grid th, table.grid td { padding: 2px 3px; }</style>
+<div><b>{{ ctx.unit_name|title }}, {{ ctx.address }} Sanctioned Strength-{{ strength }} Month-{{ month }} Year-{{ year }}</b></div>
+<table class="grid">
+	<thead>
+		<tr><th rowspan="2">Sl. No.</th><th rowspan="2">Name of food grains</th><th colspan="3">Old balance</th><th colspan="3">Purchased during the month</th><th colspan="2">Total</th><th colspan="2">Expenditure</th><th colspan="2">Balance</th></tr>
+		<tr><th>Quantity</th><th>Rate /kg</th><th>Amount (₹)</th><th>Quantity</th><th>Rate</th><th>Amount (₹)</th><th>Quantity</th><th>Amount (₹)</th><th>Quantity</th><th>Amount (₹)</th><th>Quantity</th><th>Amount (₹)</th></tr>
+	</thead>
+	<tbody>
+	{% for l in items %}
+		<tr><td class="center">{{ loop.index }}</td><td>{{ l.item_code }}</td>
+			<td class="num">{{ qty(l.old_qty) }}</td><td class="num">{{ inr(l.old_rate) if l.old_rate else "" }}</td><td class="num">{{ inr(l.old_amount) if l.old_amount else "" }}</td>
+			<td class="num">{{ qty(l.purchased_qty) }}</td><td class="num">{{ inr(l.purchased_rate) if l.purchased_rate else "" }}</td><td class="num">{{ inr(l.purchased_amount) if l.purchased_amount else "" }}</td>
+			<td class="num">{{ qty(l.total_qty) }}</td><td class="num">{{ inr(l.total_amount) if l.total_amount else "" }}</td>
+			<td class="num">{{ qty(l.consumed_qty) }}</td><td class="num">{{ inr(l.expenditure_amount) if l.expenditure_amount else "" }}</td>
+			<td class="num">{{ qty(l.balance_qty) }}</td><td class="num">{{ inr(l.balance_amount) if l.balance_amount else "" }}</td></tr>
+	{% endfor %}
+	{% for h in heads %}
+		<tr><td class="center">{{ items|length + loop.index }}</td><td>{{ h.account.split(" - ")[0] }}</td><td></td><td></td><td></td><td></td><td></td>
+			<td class="num">{{ inr(h.purchased_amount) }}</td><td></td><td class="num">{{ inr(h.total_amount) }}</td><td></td><td class="num">{{ inr(h.expenditure_amount) }}</td><td></td><td></td></tr>
+	{% endfor %}
+	</tbody>
+</table>
+<table class="grid" style="margin-top:6px; width:60%">
+	<tr><td>Opening balance</td><td class="num">{{ inr(doc.total_opening) }}</td></tr>
+	<tr><td>Monthly purchase</td><td class="num">{{ inr(doc.total_purchase) }}</td></tr>
+	<tr><td>Total</td><td class="num">{{ inr(doc.total_available) }}</td></tr>
+	<tr><td>Monthly expenditure</td><td class="num">{{ inr(doc.total_expenditure) }}</td></tr>
+	<tr><td>remaining balance</td><td class="num">{{ inr(doc.total_closing) }}</td></tr>
+</table>
+<div class="sign">Secretary</div>
+{% endblock %}
