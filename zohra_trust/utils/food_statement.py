@@ -1,11 +1,12 @@
 import frappe
 from frappe import _
-from frappe.utils import flt
+from frappe.utils import add_days, flt
 
 from zohra_trust.utils.dates import month_bounds
 from zohra_trust.utils.period import assert_period_open
 
 ITEM, HEAD = "Item", "Expense Head"
+END_OF_DAY = "23:59:59"
 
 
 def set_period(doc):
@@ -28,8 +29,7 @@ def find_previous(doc):
 def fill(doc):
 	set_period(doc)
 	doc.previous_statement = None if doc.is_opening else find_previous(doc)
-	old = previous_balances(doc.previous_statement) if doc.previous_statement else {}
-	typed = {(l.line_type, l.item_code or l.account): l for l in doc.lines} if doc.is_opening else {}
+	previous = previous_balances(doc.previous_statement) if doc.previous_statement else {}
 	purchased, consumed, debits = month_purchases(doc), month_consumption(doc), month_debits(doc)
 
 	doc.lines = []
@@ -39,11 +39,7 @@ def fill(doc):
 	)
 	for item in items:
 		line = {"line_type": ITEM, "item_code": item.name, "uom": item.stock_uom}
-		if doc.is_opening:
-			prev = typed.get((ITEM, item.name))
-			line.update(old_qty=prev.old_qty if prev else 0, old_amount=prev.old_amount if prev else 0)
-		else:
-			line.update(zip(("old_qty", "old_amount"), old.get(item.name, (0, 0))))
+		line.update(zip(("old_qty", "old_amount"), old_balance(doc, item.name, previous.get(item.name))))
 		qty, amount = purchased.get(item.name, (0, 0))
 		line.update(purchased_qty=qty, purchased_amount=amount, consumed_qty=consumed.get(item.name, 0))
 		doc.append("lines", line)
@@ -62,6 +58,26 @@ def previous_balances(previous):
 		fields=["item_code", "balance_qty", "balance_amount"],
 	)
 	return {r.item_code: (r.balance_qty, r.balance_amount) for r in rows}
+
+
+def old_balance(doc, item_code, previous):
+	"""Real stock at the end of the day before the period, valued at the last statement's closing rate.
+
+	`previous` is that statement's (balance_qty, balance_amount) for the item. Without it, or when it
+	closed with no quantity, the stock valuation rate is used. Time is given so that entries made late
+	on the day before still count: without it get_stock_balance uses the current clock time.
+	"""
+	from erpnext.stock.utils import get_stock_balance
+
+	qty, valuation_rate = get_stock_balance(
+		item_code, doc.warehouse, add_days(doc.period_start, -1), END_OF_DAY, with_valuation_rate=True
+	)
+	qty = flt(qty)
+	if previous and flt(previous[0]):
+		rate = flt(previous[1]) / flt(previous[0])
+	else:
+		rate = flt(valuation_rate)
+	return qty, flt(qty * rate, 2)
 
 
 def month_purchases(doc):
@@ -103,8 +119,6 @@ def calculate(doc):
 			line.total_amount = line.expenditure_amount = amount
 			line.balance_amount = 0
 			continue
-		if doc.is_opening and not flt(line.old_amount) and flt(line.old_rate):
-			line.old_amount = flt(flt(line.old_qty) * flt(line.old_rate), 2)
 		line.old_rate = flt(line.old_amount / line.old_qty, 2) if flt(line.old_qty) else 0
 		line.purchased_rate = flt(line.purchased_amount / line.purchased_qty, 2) if flt(line.purchased_qty) else 0
 		line.total_qty = flt(line.old_qty) + flt(line.purchased_qty)
@@ -142,7 +156,7 @@ def before_submit(doc):
 	for line in doc.lines:
 		if line.line_type != ITEM:
 			continue
-		stock = flt(get_stock_balance(line.item_code, doc.warehouse, doc.period_end))
+		stock = flt(get_stock_balance(line.item_code, doc.warehouse, doc.period_end, END_OF_DAY))
 		if flt(line.balance_qty) != stock:
 			frappe.msgprint(
 				_("{0}: statement balance {1} differs from stock {2} at period end").format(line.item_code, line.balance_qty, stock),

@@ -31,8 +31,8 @@ The order in which staff use the system. Roles in brackets. Updated after every 
 **Food Expenditure Statement (Data Entry or Store).**
 1. Make sure every purchase and consumption of the month is entered and submitted, and salaries and GESCOM are recorded as Cash Bank Vouchers (Payment, account head Salaries or GESCOM).
 2. New Food Expenditure Statement: company, month, year. For the first ever statement, tick Is Opening.
-3. Click Fill. In an opening statement type the old quantity and amount of each item, then save.
-4. Check the lines against the paper statement, then submit. The old balance of the next month comes from this one.
+3. Click Fill. Old quantity, rate and amount are read-only: they come from the real stock at the end of the day before the month starts. Save.
+4. Check the lines against the real stock and the paper statement, then submit. The old rate of the next statement is this one's closing rate; the old quantity is always the real stock then.
 
 ## Money in and out (Data Entry)
 
@@ -54,7 +54,7 @@ Open the report Receipts and Payments Account, choose the company and the dates 
 ## After the Final exam: promotion (Data Entry or Principal)
 
 1. Before promoting, make sure next year's Trust Academic Year exists.
-2. On the submitted Final sheet check the Promotion Action of each girl. Pass in classes below the last is Promote, Fail is Repeat. Pass in the last class is Complete (choose where she goes). Absent has no default: choose one. Use Leave for a girl who leaves.
+2. On the submitted Final sheet check the Promotion Action of each girl. Pass in classes below the last is Promote, Fail is Repeat. Pass in the last class is Complete (choose where she goes). Absent has no default: choose one. Use Left with T.C. for a girl who leaves with a Transfer Certificate (a girl who fails may repeat or leave this way, in any class). Fill the T.C. number and date on the Trust Student when the certificate is issued.
 3. Click Promote. Next year's enrollments are made as Planned. If the strength would be exceeded, the system refuses everything: free a seat first (for example mark a leaver) and press Promote again.
 4. At the start of the new year the Principal changes each Planned enrollment to Enrolled.
 

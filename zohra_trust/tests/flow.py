@@ -123,8 +123,8 @@ def phase_5():
 	with as_user("Data Entry"):
 		doc = frappe.get_doc({"doctype": "Result Sheet of Inmates", "company": COMPANY, "academic_year": "2026-27", "exam": "Final", "exam_date": "2027-03-10"})
 		doc.fill_rows()
-		check("5: Fill Students lists the 5 enrolled girls with maximum marks for their class", len(doc.rows) == 5 and {r.max_marks for r in doc.rows} == {250, 480, 625})
-		marks = {1: (400, "Pass", None, None), 2: (500, "Pass", None, "Working women hostel"), 3: (60, "Fail", None, None), 4: (410, "Pass", None, None), 5: (0, "Absent", "Leave", "Other")}
+		check("5: Fill Students lists the 5 enrolled girls with maximum marks for their class", len(doc.rows) == 5 and {r.max_marks for r in doc.rows} == {480, 625})
+		marks = {1: (400, "Pass", None, None), 2: (500, "Pass", None, "Working women hostel"), 3: (60, "Fail", None, None), 4: (410, "Pass", None, None), 5: (0, "Absent", "Left with T.C.", None)}
 		for row in doc.rows:
 			row.marks_obtained, row.result, action, destination = marks[row.register_sl_no]
 			row.promotion_action = action or row.promotion_action

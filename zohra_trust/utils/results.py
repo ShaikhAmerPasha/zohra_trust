@@ -4,6 +4,7 @@ from frappe.utils import cint
 
 from zohra_trust.utils.period import assert_period_open
 
+LEFT_WITH_TC = "Left with T.C."
 ENROLLMENT_FIELDS = ["name", "student", "student_name", "register_sl_no", "trust_class", "school", "unit", "academic_year", "status"]
 
 
@@ -148,8 +149,12 @@ def promote(doc):
 				)
 				entry.flags.ignore_permissions = True
 				entry.insert()
+			elif action == "Complete":
+				close_student(doc, row, enr.student, year_end, "Passed Out")
+			elif action == LEFT_WITH_TC:
+				close_student(doc, row, enr.student, year_end, "Left")
 			else:
-				close_student(doc, row, enr.student, year_end, "Passed Out" if action == "Complete" else "Left")
+				frappe.throw(_("Row {0}: choose Promotion Action").format(row.idx))
 		doc.db_set("promotion_done", 1)
 	except Exception:
 		frappe.db.rollback(save_point="promote")
@@ -160,8 +165,11 @@ def close_student(doc, row, student, year_end, status):
 	record = frappe.get_doc("Trust Student", student)
 	record.status = status
 	record.leaving_date = year_end
-	record.leaving_destination = row.leaving_destination
-	record.leaving_reason = _("Result Sheet {0}").format(doc.name)
+	if row.promotion_action == LEFT_WITH_TC:
+		record.leaving_reason = LEFT_WITH_TC
+	else:
+		record.leaving_destination = row.leaving_destination
+		record.leaving_reason = _("Result Sheet {0}").format(doc.name)
 	record.flags.ignore_permissions = True
 	record.save()
 	frappe.db.set_value("Student Enrollment", row.enrollment, "status", "Completed" if status == "Passed Out" else "Left")

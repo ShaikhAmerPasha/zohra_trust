@@ -64,6 +64,18 @@
    "description": "After class 10"
   },
   {
+   "fieldname": "tc_number",
+   "fieldtype": "Data",
+   "label": "T.C. number",
+   "depends_on": "eval:doc.status=='Left'"
+  },
+  {
+   "fieldname": "tc_date",
+   "fieldtype": "Date",
+   "label": "T.C. date",
+   "depends_on": "eval:doc.status=='Left'"
+  },
+  {
    "fieldname": "sb_g",
    "fieldtype": "Section Break",
    "label": "Guardian"
@@ -117,6 +129,8 @@
   "leaving_date",
   "leaving_reason",
   "leaving_destination",
+  "tc_number",
+  "tc_date",
   "sb_g",
   "has_guardian",
   "guardians"

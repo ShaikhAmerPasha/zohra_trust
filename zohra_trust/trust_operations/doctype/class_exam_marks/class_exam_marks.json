@@ -23,13 +23,20 @@
    "label": "Max Marks",
    "reqd": 1,
    "in_list_view": 1,
-   "description": "Government-set maximum marks"
+   "description": "Total for the class and exam, as on the filed result sheet"
+  },
+  {
+   "fieldname": "max_marks_per_subject",
+   "fieldtype": "Int",
+   "label": "Maximum marks per subject",
+   "description": "Reference only. Never used by the result sheet or its checks"
   }
  ],
  "permissions": [],
  "field_order": [
   "exam",
-  "max_marks"
+  "max_marks",
+  "max_marks_per_subject"
  ],
  "istable": 1
 }

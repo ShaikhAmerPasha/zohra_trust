@@ -1,15 +1,9 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from zohra_trust.tests.helpers import make_class, make_masters, make_student, make_unit
+from zohra_trust.tests.helpers import make_masters, make_student, make_unit
 
 COMPANY, ABBR = "Test Hostel J", "THJ"
-
-
-def make_classes_1_to_7():
-	make_masters()
-	for n in range(7, 0, -1):
-		make_class(f"Class {n}", n, f"Class {n + 1}", 250)
 
 
 def sheet(company, exam="Final", year="2026-27"):
@@ -33,7 +27,7 @@ class TestResultSheet(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
-		make_classes_1_to_7()
+		make_masters()
 		make_unit(COMPANY, ABBR)
 		# one girl in each of classes 1 to 10, plus a repeater in class 3, a failed last-class girl and a leaver
 		cls.girls = {}
@@ -107,13 +101,13 @@ class TestResultSheet(FrappeTestCase):
 			doc.submit()
 
 	def test_promotion(self):
-		"""Class 1 to 9 pass move up, a fail repeats, class 10 pass completes, Leave closes."""
+		"""Class 1 to 9 pass move up, a fail repeats, class 10 pass completes, Left with T.C. closes."""
 		doc = sheet(COMPANY)
 		results = {self.name(n): (100, "Pass", None, None) for n in range(1, 14)}
 		results[self.name(10)] = (500, "Pass", None, "Working women hostel")
 		results[self.name(11)] = (50, "Fail", None, None)
 		results[self.name(12)] = (50, "Fail", None, None)
-		results[self.name(13)] = (100, "Pass", "Leave", "Other")
+		results[self.name(13)] = (100, "Pass", "Left with T.C.", None)
 		mark(doc, results)
 		doc.insert()
 		doc.submit()
@@ -138,9 +132,9 @@ class TestResultSheet(FrappeTestCase):
 		self.assertEqual((done.status, str(done.leaving_date), done.leaving_destination), ("Passed Out", "2027-03-31", "Working women hostel"))
 		self.assertEqual(frappe.db.get_value("Student Enrollment", self.girls[self.name(10)].name, "status"), "Completed")
 		self.assertFalse(frappe.db.exists("Student Enrollment", f"ENR-2027-28-{done.name}"))
-		# Leave closes
+		# Left with T.C. closes
 		left = frappe.get_doc("Trust Student", self.girls[self.name(13)].student)
-		self.assertEqual((left.status, left.leaving_destination), ("Left", "Other"))
+		self.assertEqual((left.status, left.leaving_reason), ("Left", "Left with T.C."))
 		self.assertEqual(frappe.db.get_value("Student Enrollment", self.girls[self.name(13)].name, "status"), "Left")
 		# last year's enrollments are unchanged, except the status of those who completed or left
 		for n in (1, 5, 9, 11, 12):
@@ -153,6 +147,61 @@ class TestResultSheet(FrappeTestCase):
 			doc.promote()
 		with self.assertRaises(frappe.ValidationError):
 			doc.cancel()
+
+	def promote_sheet(self, results):
+		doc = sheet(COMPANY)
+		base = {self.name(n): (100, "Pass", None, "Other" if n in (10, 12) else None) for n in range(1, 14)}  # class 10 passes complete
+		base.update(results)
+		mark(doc, base)
+		doc.insert()
+		doc.submit()
+		doc.promote()
+		return doc
+
+	def student_and_enrollments(self, n):
+		enr = self.girls[self.name(n)]
+		return (
+			frappe.get_doc("Trust Student", enr.student),
+			frappe.db.get_value("Student Enrollment", enr.name, "status"),
+			frappe.db.exists("Student Enrollment", f"ENR-2027-28-{enr.student}"),
+		)
+
+	def test_fail_with_tc_closes_the_record_and_makes_no_enrollment(self):
+		self.promote_sheet({self.name(11): (50, "Fail", "Left with T.C.", None)})
+		student, enrollment_status, next_year = self.student_and_enrollments(11)
+		self.assertEqual((student.status, student.leaving_reason, str(student.leaving_date)), ("Left", "Left with T.C.", "2027-03-31"))
+		self.assertFalse(student.leaving_destination)  # no destination is needed
+		self.assertFalse(student.tc_number or student.tc_date)  # the certificate may come later
+		self.assertEqual(enrollment_status, "Left")
+		self.assertFalse(next_year)
+
+	def test_fail_with_repeat_makes_the_same_class_enrollment(self):
+		self.promote_sheet({self.name(11): (50, "Fail", "Repeat", None)})
+		student, enrollment_status, next_year = self.student_and_enrollments(11)
+		self.assertEqual((student.status, enrollment_status), ("Active", "Enrolled"))
+		new = frappe.get_doc("Student Enrollment", next_year)
+		self.assertEqual((new.trust_class, new.is_repeating, new.status), ("Class 3", 1, "Planned"))
+
+	def test_class_10_fail_allows_both(self):
+		"""Girl 10 and girl 12 are in class 10: one fails and leaves with a T.C., the other fails and repeats."""
+		self.promote_sheet(
+			{self.name(10): (50, "Fail", "Left with T.C.", None), self.name(12): (50, "Fail", None, None)}  # default is Repeat
+		)
+		leaver, leaver_enrollment, leaver_next = self.student_and_enrollments(10)
+		self.assertEqual((leaver.status, leaver_enrollment, bool(leaver_next)), ("Left", "Left", False))
+		repeater, repeater_enrollment, repeater_next = self.student_and_enrollments(12)
+		new = frappe.get_doc("Student Enrollment", repeater_next)
+		self.assertEqual((repeater.status, new.trust_class, new.is_repeating), ("Active", "Class 10", 1))
+
+	def test_patch_converts_old_leave_rows(self):
+		from zohra_trust.patches.rename_leave_to_left_with_tc import execute
+
+		doc = sheet(COMPANY)
+		mark(doc, {self.name(n): (100, "Pass", None, None) for n in range(1, 14)})
+		doc.insert()
+		frappe.db.set_value("Result Row", doc.rows[0].name, "promotion_action", "Leave")  # as an old sheet had it
+		execute()
+		self.assertEqual(frappe.db.get_value("Result Row", doc.rows[0].name, "promotion_action"), "Left with T.C.")
 
 	def test_only_final_submitted_sheet_promotes(self):
 		mid = sheet(COMPANY, exam="Mid-term")
@@ -211,3 +260,28 @@ class TestPromotionLimit(FrappeTestCase):
 		doc.promote()
 		self.assertEqual(frappe.db.count("Student Enrollment", {"unit": company, "academic_year": "2027-28", "status": "Planned"}), 3)
 		self.assertEqual(len(girls), 3)
+
+
+class TestSeedClasses(FrappeTestCase):
+	def test_seed_is_data_and_idempotent(self):
+		from zohra_trust.setup.seed_classes import seed_classes
+
+		frappe.db.delete("Trust Class", {"name": ["like", "Class %"]})  # rolled back at the end of the test
+		frappe.db.delete("Class Exam Marks", {"parent": ["like", "Class %"]})
+		seed_classes()
+		classes = {c.name: frappe.get_doc("Trust Class", c.name) for c in frappe.get_all("Trust Class", {"name": ["like", "Class %"]})}
+		self.assertEqual(sorted(classes, key=lambda n: int(n.split()[1])), [f"Class {n}" for n in range(1, 11)])
+		for n in range(1, 10):
+			self.assertEqual(classes[f"Class {n}"].next_class, f"Class {n + 1}")
+		self.assertFalse(classes["Class 10"].next_class)
+		total = {n: 250 if n <= 5 else 480 if n <= 9 else 625 for n in range(1, 11)}
+		subject = {n: 40 if n <= 5 else 60 if n <= 7 else 80 for n in range(1, 11)}
+		for n in range(1, 11):
+			rows = {r.exam: (r.max_marks, r.max_marks_per_subject) for r in classes[f"Class {n}"].exam_marks}
+			self.assertEqual(rows, {"Mid-term": (total[n], subject[n]), "Final": (total[n], subject[n])}, n)
+		self.assertEqual(classes["Class 8"].exam_marks[0].max_marks, 480)
+		# a second run changes nothing, even after a total was changed by hand
+		frappe.db.set_value("Class Exam Marks", classes["Class 8"].exam_marks[0].name, "max_marks", 500)
+		seed_classes()
+		self.assertEqual(frappe.db.get_value("Class Exam Marks", classes["Class 8"].exam_marks[0].name, "max_marks"), 500)
+		self.assertEqual(frappe.db.count("Trust Class", {"name": ["like", "Class %"]}), 10)

@@ -78,14 +78,14 @@
    "fieldtype": "Select",
    "label": "Promotion Action",
    "in_list_view": 1,
-   "options": "\nPromote\nRepeat\nComplete\nLeave"
+   "options": "\nPromote\nRepeat\nComplete\nLeft with T.C."
   },
   {
    "fieldname": "leaving_destination",
    "fieldtype": "Select",
    "label": "Leaving Destination",
    "options": "\nZohra Trust care\nWorking women hostel\nOther",
-   "depends_on": "eval:doc.promotion_action=='Complete' || doc.promotion_action=='Leave'"
+   "depends_on": "eval:doc.promotion_action=='Complete'"
   }
  ],
  "permissions": [],

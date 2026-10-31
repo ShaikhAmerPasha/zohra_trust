@@ -5,3 +5,4 @@ zohra_trust.patches.rename_officer_bearer
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+zohra_trust.patches.rename_leave_to_left_with_tc

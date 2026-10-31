@@ -1,9 +1,9 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
+from frappe.utils import flt
 
 from zohra_trust.api.material_consumption import copy_yesterday
 from zohra_trust.tests.helpers import bin_qty, consume, make_unit, pay_expense, purchase, seed_stock
-from zohra_trust.utils.food_statement import calculate
 
 # item: (old_qty, old_amount, purchased_qty, purchased_amount, consumed)
 JUNE = {
@@ -30,7 +30,7 @@ JULY = {  # item: (purchased_qty, purchased_amount, consumed)
 }  # fmt: skip
 JULY_HEADS = {"Vegetables": 20000, "Mutton": 15000, "Fuel": 12700, "Salaries": 11000}
 
-# September (August not entered): old balances typed on an opening statement
+# September (August not entered): real stock at 31 August, then an opening statement
 SEPT_OLD = {
 	"Rice": (100, 4900), "Jawar": (100, 3000), "S. Oil": (5, 750), "Daal": (10, 800), "Sugar": (10, 550),
 	"Tamarind": (2, 100), "Salt": (2, 40), "Condiments": (10, 2000), "Onion": (25, 500), "C. Oil": (50, 10000),
@@ -68,13 +68,6 @@ def by_item(doc):
 	return {l.item_code or l.account.split(" - ")[0]: l for l in doc.lines}
 
 
-def set_old(doc, olds):
-	for line in doc.lines:
-		if line.item_code in olds:
-			line.old_qty, line.old_amount = olds[line.item_code]
-	calculate(doc)
-
-
 class TestFoodStatement(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
@@ -88,8 +81,7 @@ class TestFoodStatement(FrappeTestCase):
 		run_month(a, c, 6, {i: (v[2], v[3]) for i, v in JUNE.items()}, {i: v[4] for i, v in JUNE.items()}, JUNE_HEADS)
 
 		june = statement(c, "June", is_opening=1)
-		set_old(june, {i: (v[0], v[1]) for i, v in JUNE.items()})
-		june.fill()  # filling again keeps what was typed
+		june.fill()  # filling again gives the same old balances: they come from the real stock
 		lines = by_item(june)
 		for item, (exp, bq, ba) in JUNE_EXPECTED.items():
 			line = lines[item]
@@ -136,7 +128,6 @@ class TestSeptemberOpening(FrappeTestCase):
 		seed_stock(a, c, "2026-08-31", SEPT_OLD)
 		run_month(a, c, 9, {i: (v[0], v[1]) for i, v in SEPT.items()}, {i: v[2] for i, v in SEPT.items()}, SEPT_HEADS)
 		doc = statement(c, "September", is_opening=1)
-		set_old(doc, SEPT_OLD)
 		self.assertEqual(doc.total_opening, 22640)
 		self.assertEqual(doc.total_purchase, 224388)
 		self.assertEqual(doc.total_available, 247028)
@@ -145,6 +136,94 @@ class TestSeptemberOpening(FrappeTestCase):
 		self.assertAlmostEqual(doc.total_closing, 83040, delta=0.5)
 		doc.insert()
 		doc.submit()
+
+
+def receipt(abbr, company, date, time, item, qty, amount):
+	"""Material Receipt at an exact time of day."""
+	entry = frappe.get_doc(
+		{
+			"doctype": "Stock Entry", "stock_entry_type": "Material Receipt", "company": company, "posting_date": date,
+			"posting_time": time, "set_posting_time": 1, "to_warehouse": f"Hostel Store - {abbr}",
+			"items": [{"item_code": item, "qty": qty, "basic_rate": amount / qty, "t_warehouse": f"Hostel Store - {abbr}"}],
+		}
+	)
+	entry.insert()
+	entry.submit()
+
+
+class TestRealStockOldBalance(FrappeTestCase):
+	def test_march_then_june_old_balance_is_real_stock(self):
+		"""No statement for April and May: June starts from the real stock, rated at March's closing rate."""
+		from erpnext.stock.utils import get_stock_balance
+
+		c, a = "Test Hostel M", "THM"
+		make_unit(c, a)
+		seed_stock(a, c, "2026-02-28", {"Rice": (100, 4900)})
+		purchase(a, c, "2026-03-05", {"Rice": (50, 2500)})
+		consume(c, "2026-03-20", {"Rice": 20})
+		march = statement(c, "March", is_opening=1)
+		march.insert()
+		march.submit()
+		rice = by_item(march)["Rice"]
+		self.assertEqual((rice.balance_qty, rice.balance_amount), (130, 6400))
+		consume(c, "2026-04-10", {"Rice": 30})  # kitchen goes on in April and May, no statement is made
+		consume(c, "2026-05-10", {"Rice": 25})
+		june = statement(c, "June")
+		self.assertEqual(june.previous_statement, march.name)
+		rice = by_item(june)["Rice"]
+		real_stock = get_stock_balance("Rice", f"Hostel Store - {a}", "2026-05-31", "23:59:59")
+		self.assertEqual(real_stock, 75)
+		self.assertEqual(rice.old_qty, real_stock)
+		self.assertNotEqual(rice.old_qty, 130)  # not March's closing quantity
+		self.assertEqual(rice.old_amount, flt(75 * 6400 / 130, 2))  # last statement's closing rate
+
+	def test_first_statement_uses_valuation_rate(self):
+		c, a = "Test Hostel N", "THN"
+		make_unit(c, a)
+		seed_stock(a, c, "2026-05-31", {"Rice": (20, 1000), "Sugar": (10, 550)})
+		june = statement(c, "June", is_opening=1)
+		lines = by_item(june)
+		self.assertEqual((lines["Rice"].old_qty, lines["Rice"].old_rate, lines["Rice"].old_amount), (20, 50, 1000))
+		self.assertEqual((lines["Sugar"].old_qty, lines["Sugar"].old_amount), (10, 550))
+		self.assertEqual(june.total_opening, 1550)
+
+	def test_stock_entry_at_2330_the_day_before_is_included(self):
+		c, a = "Test Hostel P", "THP"
+		make_unit(c, a)
+		receipt(a, c, "2026-05-31", "10:00:00", "Rice", 10, 490)
+		receipt(a, c, "2026-05-31", "23:30:00", "Rice", 20, 1000)
+		receipt(a, c, "2026-06-01", "00:05:00", "Rice", 99, 4950)  # the next day: not old stock
+		june = statement(c, "June", is_opening=1)
+		rice = by_item(june)["Rice"]
+		print(f"\nold_qty with the 23:30 entry on 31 May: {rice.old_qty}, old_amount {rice.old_amount}")
+		self.assertEqual(rice.old_qty, 30)
+		self.assertEqual(rice.old_amount, 1490)
+
+	def test_go_live_stock_reconciliation(self):
+		"""The physical count loaded as a Stock Reconciliation with a valuation rate gives the opening amounts."""
+		c, a = "Test Hostel Q", "THQ"
+		make_unit(c, a)
+		rec = frappe.get_doc(
+			{
+				"doctype": "Stock Reconciliation", "company": c, "purpose": "Opening Stock", "posting_date": "2026-05-31",
+				"posting_time": "12:00:00", "set_posting_time": 1, "expense_account": f"Temporary Opening - {a}",
+				"items": [
+					{"item_code": "Rice", "warehouse": f"Hostel Store - {a}", "qty": 40, "valuation_rate": 50},
+					{"item_code": "Sugar", "warehouse": f"Hostel Store - {a}", "qty": 10, "valuation_rate": 55},
+				],
+			}
+		)
+		rec.insert()
+		rec.submit()
+		june = statement(c, "June", is_opening=1)
+		lines = by_item(june)
+		self.assertEqual((lines["Rice"].old_qty, lines["Rice"].old_amount), (40, 2000))
+		self.assertEqual((lines["Sugar"].old_qty, lines["Sugar"].old_amount), (10, 550))
+
+	def test_old_values_are_read_only(self):
+		meta = frappe.get_meta("Food Expenditure Statement Line")
+		for field in ("old_qty", "old_rate", "old_amount"):
+			self.assertEqual(meta.get_field(field).read_only, 1, field)
 
 
 class TestConsumption(FrappeTestCase):

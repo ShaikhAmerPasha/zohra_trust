@@ -15,11 +15,11 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 | Slice | Tests | Passed | Flow checks passed |
 |---|---|---|---|
 | 1: masters, students, Boarding Attendance | 14 | 14 | 4/4 (flow phase 1) |
-| 2: purchases, consumption, Food Expenditure Statement | 8 | 8 | 7/7 (flow phase 2) |
+| 2: purchases, consumption, Food Expenditure Statement (real-stock old balance) | 13 | 13 | 7/7 (flow phase 2) |
 | 3: Cash Bank Voucher, Receipts and Payments | 9 | 9 | 5/5 (flow phase 3) |
-| 5: Result Sheet, promotion | 8 | 8 | 5/5 (flow phase 5) |
+| 5: Result Sheet, promotion, Left with T.C., seed_classes, patch | 13 | 13 | 5/5 (flow phase 5) |
 | Schema repair after migrate | 1 | 1 | n/a |
-| Whole suite now | 40 | 40 | 21/21 including cleanup |
+| Whole suite now | 50 | 50 | 21/21 including cleanup |
 
 ## Slice 1 tests (`tests/test_slice1.py`)
 
@@ -40,10 +40,14 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 
 ## Slice 2 tests (`tests/test_slice2.py`)
 
-- June opening statement: every item line of the filed table (old, purchased, consumed, expenditure, balance), amount-only rows (Vegetables 15,370; Mutton 22,700; Fuel 11,780; Salaries 11,000; Milk and GESCOM nil), totals 7,540 / 1,79,150 / 1,86,690 / 1,63,260 / 23,430. Filling twice keeps the typed old balances.
+- June opening statement (real stock seeded with the filed old balances): every item line of the filed table (old, purchased, consumed, expenditure, balance), amount-only rows (Vegetables 15,370; Mutton 22,700; Fuel 11,780; Salaries 11,000; Milk and GESCOM nil), totals 7,540 / 1,79,150 / 1,86,690 / 1,63,260 / 23,430. Filling twice gives the same old balances, because they come from the real stock.
 - July chains to June: totals 23,430 / 1,37,700 / 1,61,130 / 1,48,865 / 12,265. A later month with no statement in between still chains to the last submitted one. (Per-item July data is made up to reach the filed totals.)
-- September opening: old 22,640, purchase 2,24,388, available 2,47,028, expenditure 1,63,988.50, closing 83,040 within 0.50. (Per-item data made up.)
+- September opening (real stock at 31 August): old 22,640, purchase 2,24,388, available 2,47,028, expenditure 1,63,988.50, closing 83,040 within 0.50. (Per-item data made up.)
 - A non-opening statement with no earlier submitted one cannot be submitted.
+- March statement, April and May consumption with no statement, then June: old quantity equals the real stock at 31 May (75, not March's 130) and the old amount uses March's closing rate.
+- The first statement values old stock at the stock valuation rate; a Stock Reconciliation with valuation rates gives the opening amounts.
+- A stock entry made at 23:30 on the day before the period is included in the old quantity (one made at 00:05 the next day is not). The lookup passes the time 23:59:59; without a time, `get_stock_balance` uses the current clock time.
+- Old quantity, rate and amount are read-only.
 - Material Consumption lowers the Bin and posts no GL; cancelling restores the Bin and cancels the Stock Entry.
 - `copy_yesterday` returns the earlier day's lines; a second consumption on one day is refused.
 - A non-statement item is refused; a closed period refuses a consumption.
@@ -61,11 +65,11 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 
 ## Slice 5 tests (`tests/test_slice5.py`)
 
-- Fill Students: 13 girls in register order, maximum marks by class (250, 480, 625), guardian name only where there is one.
+- Fill Students: 13 girls in register order, maximum marks by class (data from `seed_classes`: 250 for classes 1 to 5, 480 for 6 to 9, 625 for class 10), guardian name only where there is one.
 - Marks above the maximum are refused; totals appeared, passed, failed; a missing result stops submit; sheet name `RSI-THJ-2026-27-Mid-term`.
 - Default actions: Pass in classes 1 to 9 Promote, Pass in class 10 Complete, Fail Repeat (also in class 10), Absent blank.
 - Final submit is refused while an action or leaving destination is missing.
-- Promotion: classes 1 to 9 move up to the next class as Planned with `previous_enrollment`; a failed girl repeats with `is_repeating`; a class 10 pass is Passed Out with date 31 March 2027, destination and Completed enrollment; Leave closes the student; register numbers 1 to 11 are sequential; last year's enrollments are unchanged; promoting twice and cancelling after promotion are refused.
+- Promotion: classes 1 to 9 move up to the next class as Planned with `previous_enrollment`; a failed girl repeats with `is_repeating`; a class 10 pass is Passed Out with date 31 March 2027, destination and Completed enrollment; Left with T.C. closes the student with reason "Left with T.C." and no next-year enrollment; register numbers 1 to 11 are sequential; last year's enrollments are unchanged; promoting twice and cancelling after promotion are refused.
 - A Mid-term sheet and an unsubmitted sheet cannot promote.
 - Data Entry can enter and submit a sheet.
 - Strength: with strength 3 and a fourth seat already held next year, promotion is refused with "Sanctioned strength reached" and nothing is saved; after the seat is freed it succeeds.

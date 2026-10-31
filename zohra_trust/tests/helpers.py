@@ -1,22 +1,10 @@
 import frappe
 
 from zohra_trust.setup.create_unit import create_unit
+from zohra_trust.setup.seed_classes import seed_classes
 
 SCHOOLS = ("Zohra English Medium", "Zohra Kannada Medium")
-CLASSES = ("Class 8", "Class 9", "Class 10")
-
-
-MAX_MARKS = {"Class 8": 250, "Class 9": 480, "Class 10": 625}
-
-
-def make_class(name, sequence, next_class, max_marks):
-	if not frappe.db.exists("Trust Class", name):
-		frappe.get_doc(
-			{
-				"doctype": "Trust Class", "class_name": name, "sequence": sequence, "next_class": next_class,
-				"exam_marks": [{"exam": "Mid-term", "max_marks": max_marks}, {"exam": "Final", "max_marks": max_marks}],
-			}
-		).insert()
+DEFAULT_CLASSES = ("Class 8", "Class 9", "Class 10")  # the classes make_student cycles through; their marks come from seed_classes
 
 
 def make_masters():
@@ -29,16 +17,10 @@ def make_masters():
 		frappe.get_doc(
 			{"doctype": "Trust Academic Year", "academic_year_name": "2027-28", "start_date": "2027-04-01", "end_date": "2028-03-31"}
 		).insert()
-	for exam, seq, final in (("Mid-term", 1, 0), ("Final", 2, 1)):
-		if not frappe.db.exists("Trust Exam", exam):
-			frappe.get_doc({"doctype": "Trust Exam", "exam_name": exam, "sequence": seq, "is_final": final}).insert()
 	for school, medium in zip(SCHOOLS, ("English", "Kannada")):
 		if not frappe.db.exists("Trust School", school):
 			frappe.get_doc({"doctype": "Trust School", "school_name": school, "medium": medium}).insert()
-	nxt = None
-	for i, cls in reversed(list(enumerate(CLASSES))):
-		make_class(cls, i + 8, nxt, MAX_MARKS[cls])
-		nxt = cls
+	seed_classes()
 
 
 def make_unit(company, abbr, strength=150, rate=850):
@@ -60,7 +42,7 @@ def make_student(company, n, status="Enrolled", enrollment_date="2026-04-01", ac
 			"academic_year": academic_year,
 			"unit": company,
 			"school": SCHOOLS[0] if n <= 60 else SCHOOLS[1],
-			"trust_class": trust_class or CLASSES[n % 3],
+			"trust_class": trust_class or DEFAULT_CLASSES[n % 3],
 			"register_sl_no": register or n,
 			"enrollment_date": enrollment_date,
 			"status": status,
