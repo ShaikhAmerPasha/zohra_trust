@@ -168,13 +168,38 @@ New **Report Pack**: the hostel, from date 1 April, to date 30 September. Save. 
 ### 5.2 Preview and download
 Click **Preview**. A window opens with the pack as it is right now. The orange box lists what to fix before filing: a month with no submitted attendance or food statement, no staff records, a missing uploaded file. April and May are never listed. Fix the entry, click Preview again. When it is clean, click **Download PDF** and print.
 
-First preview, with the gaps listed (here: July to September were not entered, and there were no staff yet):
+**A pack that is not ready.** The first time we previewed, only June had been entered. The orange box listed July, August and September, and there were no staff yet:
 
-![Preview, first](screenshots/25-pack-preview-first.jpg)
+![Preview with gaps](screenshots/25-pack-preview-first.jpg)
 
-After adding the staff records, the staff list appears (10 pages; only the three months not entered remain):
+After the staff records were added only the three missing months remained:
 
 ![Preview, with staff](screenshots/26-pack-preview-with-staff.jpg)
+
+**A complete pack.** After July, August and September were entered the same way as June (purchases, kitchen use, salaries, attendance, food statement), the box disappears and the pack is 19 pages:
+
+![Preview, complete](screenshots/31-pack-preview-complete.jpg)
+
+### 5.3 What the finished report looks like
+`Zohra_half_yearly_report_DEMO.pdf` (in the same folder as this guide) is the full 19-page pack from the run: letter, receipts and payments, abstract, four food statements, Appendix – H, officer bearers, staff, result sheet and eight attendance registers (two schools, four months). Sample pages:
+
+Receipts and Payments account (both sides total ₹2,80,600: food ₹30,300, salaries ₹44,000, closing cash ₹6,300, bank ₹2,00,000):
+
+![Receipts and payments page](screenshots/27-report-receipts-and-payments.png)
+
+Attendance abstract:
+
+![Abstract](screenshots/29-report-abstract.png)
+
+Food expenditure statement for June (one page per month, landscape):
+
+![Food statement](screenshots/28-report-food-statement-june.png)
+
+School attendance register (Kannada heading; one per school and month):
+
+![Attendance register](screenshots/30-report-attendance-register.png)
+
+The data is dummy: six girls, small quantities. The layout and the way every number is built are the real ones.
 
 ---
 

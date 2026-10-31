@@ -177,3 +177,43 @@ def setup_site():
 		entry.submit()
 	frappe.db.commit()
 	print("Empty hostel ready:", COMPANY)
+
+
+def add_months(months=(7, 8, 9)):
+	"""July to September for the hostel set up by setup_site and run through June: purchases, kitchen use, salaries, attendance and food statements.
+
+	The Final result sheet was promoted in the demo before these months, which closed two girls' 2026-27 enrollments. They are
+	set back to Enrolled while the attendance is filled (the roll was still six girls in those months) and closed again after.
+	"""
+	from zohra_trust.tests.helpers import consume, make_attendance, purchase
+	from zohra_trust.utils.dates import MONTHS
+
+	closed = frappe.get_all("Student Enrollment", {"unit": COMPANY, "academic_year": "2026-27", "status": ["in", ["Left", "Completed"]]}, ["name", "status"])
+	for e in closed:
+		frappe.db.set_value("Student Enrollment", e.name, "status", "Enrolled")
+	try:
+		for m in months:
+			month, stamp = MONTHS[m - 1], f"2026-{m:02d}"
+			purchase(ABBR, COMPANY, f"{stamp}-03", {"Rice": (100, 5000), "Sugar": (10, 600)})
+			purchase(ABBR, COMPANY, f"{stamp}-04", {"Vegetables": (1, 2000)}, stock=False)
+			consume(COMPANY, f"{stamp}-15", {"Rice": 45, "Sugar": 5})
+			consume(COMPANY, f"{stamp}-16", {"Rice": 45, "Sugar": 5})
+			voucher = frappe.get_doc(
+				{"doctype": "Cash Bank Voucher", "company": COMPANY, "voucher_type": "Payment", "posting_date": f"{stamp}-28", "mode": "Cash",
+				 "account_head": f"Salaries - {ABBR}", "amount": 11000, "narration": f"{month} salaries"}
+			)
+			voucher.insert()
+			voucher.submit()
+			attendance = make_attendance(COMPANY, month, 2026, working_days=(25, 24))
+			attendance.fill_rows()
+			attendance.insert()
+			attendance.submit()
+			statement = frappe.get_doc({"doctype": "Food Expenditure Statement", "company": COMPANY, "month": month, "year": 2026, "is_opening": 0})
+			statement.fill()
+			statement.insert()
+			statement.submit()
+	finally:
+		for e in closed:
+			frappe.db.set_value("Student Enrollment", e.name, "status", e.status)
+	frappe.db.commit()
+	print("Months added:", [MONTHS[m - 1] for m in months])
