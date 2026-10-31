@@ -21,9 +21,9 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 | Schema repair after migrate | 1 | 1 | n/a |
 | Cancel from the screen (Material Consumption, Cash Bank Voucher) | 5 | 5 | n/a |
 | 4a: generated report pages | 14 | 14 | n/a |
-| 4b: Report Pack, page list, merged PDF | 9 | 9 | n/a |
+| 4b: Report Pack, page list, merged PDF, kept PDF | 10 | 10 | n/a |
 | 6: the filed half year, pages 2 to 7 | 1 (213 comparisons) | 1 | n/a |
-| Whole suite now | 80 | 80 | 21/21 including cleanup |
+| Whole suite now | 81 | 81 | 21/21 including cleanup |
 
 ## Slice 1 tests (`tests/test_slice1.py`)
 
