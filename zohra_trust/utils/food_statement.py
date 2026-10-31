@@ -60,6 +60,19 @@ def previous_balances(previous):
 	return {r.item_code: (r.balance_qty, r.balance_amount) for r in rows}
 
 
+def stock_on(item_code, warehouse, date):
+	"""(quantity, valuation rate) at the end of `date`.
+
+	Reads the Stock Ledger as get_stock_balance does, but without its Item read check, so every role
+	that may fill a statement can. The time is given because without it the current clock time is used
+	and entries made later that day would be dropped.
+	"""
+	from erpnext.stock.stock_ledger import get_previous_sle
+
+	last = get_previous_sle({"item_code": item_code, "warehouse": warehouse, "posting_date": date, "posting_time": END_OF_DAY})
+	return flt(last.get("qty_after_transaction")), flt(last.get("valuation_rate"))
+
+
 def old_balance(doc, item_code, previous):
 	"""Real stock at the end of the day before the period, valued at the last statement's closing rate.
 
@@ -67,12 +80,7 @@ def old_balance(doc, item_code, previous):
 	closed with no quantity, the stock valuation rate is used. Time is given so that entries made late
 	on the day before still count: without it get_stock_balance uses the current clock time.
 	"""
-	from erpnext.stock.utils import get_stock_balance
-
-	qty, valuation_rate = get_stock_balance(
-		item_code, doc.warehouse, add_days(doc.period_start, -1), END_OF_DAY, with_valuation_rate=True
-	)
-	qty = flt(qty)
+	qty, valuation_rate = stock_on(item_code, doc.warehouse, add_days(doc.period_start, -1))
 	if previous and flt(previous[0]):
 		rate = flt(previous[1]) / flt(previous[0])
 	else:
@@ -151,12 +159,10 @@ def validate_statement(doc):
 def before_submit(doc):
 	if not doc.is_opening and not doc.previous_statement:
 		frappe.throw(_("No earlier submitted statement found. Tick Is Opening if this is the first statement"))
-	from erpnext.stock.utils import get_stock_balance
-
 	for line in doc.lines:
 		if line.line_type != ITEM:
 			continue
-		stock = flt(get_stock_balance(line.item_code, doc.warehouse, doc.period_end, END_OF_DAY))
+		stock = stock_on(line.item_code, doc.warehouse, doc.period_end)[0]
 		if flt(line.balance_qty) != stock:
 			frappe.msgprint(
 				_("{0}: statement balance {1} differs from stock {2} at period end").format(line.item_code, line.balance_qty, stock),

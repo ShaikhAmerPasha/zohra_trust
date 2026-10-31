@@ -220,6 +220,24 @@ class TestRealStockOldBalance(FrappeTestCase):
 		self.assertEqual((lines["Rice"].old_qty, lines["Rice"].old_amount), (40, 2000))
 		self.assertEqual((lines["Sugar"].old_qty, lines["Sugar"].old_amount), (10, 550))
 
+	def test_principal_can_fill_without_item_permission(self):
+		"""Principal and Data Entry may fill a statement although they have no Item read right."""
+		c, a = "Test Hostel R", "THR"
+		make_unit(c, a)
+		seed_stock(a, c, "2026-05-31", {"Rice": (20, 1000)})
+		user = "fill.principal@example.com"
+		if not frappe.db.exists("User", user):
+			frappe.get_doc({"doctype": "User", "email": user, "first_name": "FP", "send_welcome_email": 0, "roles": [{"role": "Principal"}]}).insert()
+		frappe.set_user(user)
+		try:
+			doc = frappe.get_doc({"doctype": "Food Expenditure Statement", "company": c, "month": "June", "year": 2026, "is_opening": 1})
+			doc.fill()
+			doc.insert()
+			doc.submit()
+			self.assertEqual(by_item(doc)["Rice"].old_qty, 20)
+		finally:
+			frappe.set_user("Administrator")
+
 	def test_old_values_are_read_only(self):
 		meta = frappe.get_meta("Food Expenditure Statement Line")
 		for field in ("old_qty", "old_rate", "old_amount"):
