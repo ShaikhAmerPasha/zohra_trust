@@ -154,3 +154,26 @@ def pack_preview(from_date="2026-04-01", to_date="2026-09-30", folder="/tmp"):
 		with open(f"{folder}/page_{n:02d}_{p['key']}.pdf", "wb") as f:
 			f.write(to_pdf(p["html"], p["orientation"]))
 	print(len(pages), "pages;", "warnings:", warnings)
+
+
+def setup_site():
+	"""An empty hostel: fiscal year, academic years, schools, classes, the unit and its opening cash and bank. No girls, no stock."""
+	if not frappe.db.exists("Fiscal Year", "2025-2026"):
+		frappe.get_doc({"doctype": "Fiscal Year", "year": "2025-2026", "year_start_date": "2025-04-01", "year_end_date": "2026-03-31"}).insert()
+	make_masters()
+	create_unit(COMPANY, ABBR, sanctioned_strength=150, grant_rate=850, effective_from="2026-04-01")
+	if not frappe.db.exists("Journal Entry", {"user_remark": "Opening balances"}):
+		entry = frappe.get_doc(
+			{
+				"doctype": "Journal Entry", "company": COMPANY, "posting_date": "2026-03-31", "user_remark": "Opening balances",
+				"accounts": [
+					{"account": f"Cash - {ABBR}", "debit_in_account_currency": 50000},
+					{"account": f"Bank - {ABBR}", "debit_in_account_currency": 200000},
+					{"account": f"Temporary Opening - {ABBR}", "credit_in_account_currency": 250000},
+				],
+			}
+		)
+		entry.insert()
+		entry.submit()
+	frappe.db.commit()
+	print("Empty hostel ready:", COMPANY)
