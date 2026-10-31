@@ -117,6 +117,23 @@ class TestReportPack(FrappeTestCase):
 		warnings = info(doc)["warnings"]
 		self.assertTrue(any("Nothing to print for Food expenditure statements" in w for w in warnings))
 
+	def test_merged_pdf_is_kept_so_download_after_preview_is_instant(self):
+		from unittest import mock
+
+		memory = {}  # stands in for Redis, which the test runner does not keep values in
+
+		doc = pack(pages=[{"section": "Letter", "include": 1}, {"section": "Abstract statement of attendance", "include": 1}])
+		with mock.patch("zohra_trust.utils.report_pack.kept", memory.get), mock.patch("zohra_trust.utils.report_pack.keep", memory.__setitem__), mock.patch("zohra_trust.utils.report_pack.to_pdf", wraps=to_pdf) as render:
+			first = pdf_bytes(doc)
+			rendered = render.call_count
+			second = pdf_bytes(doc)
+			self.assertEqual(render.call_count, rendered)  # the second call rendered nothing
+			self.assertEqual(rendered, 2)
+			self.assertEqual(first, second)
+			doc.pages[1].include = 0  # a different pack is a different PDF, not the kept one
+			self.assertEqual(len(PdfReader(io.BytesIO(pdf_bytes(doc))).pages), 1)
+			self.assertEqual(len(PdfReader(io.BytesIO(first)).pages), 2)
+
 	def test_endpoints_return_info_and_a_pdf(self):
 		doc = pack()
 		self.assertEqual(pack_info(doc.name)["pages"], info(doc)["pages"])

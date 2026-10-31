@@ -10,7 +10,7 @@ import re
 import frappe
 from frappe import _
 from frappe.utils import add_months, flt, formatdate, getdate
-from frappe.utils.pdf import get_pdf
+import pdfkit
 
 from zohra_trust.trust_operations.report.receipts_and_payments_account.receipts_and_payments_account import execute as receipts_payments
 from zohra_trust.utils.dates import MONTHS, month_bounds
@@ -268,4 +268,14 @@ def build_pages(company, from_date, to_date):
 
 
 def to_pdf(html, orientation=PORTRAIT):
-	return get_pdf(html, {"page-size": "A4", "orientation": orientation, "margin-top": "12mm", "margin-bottom": "12mm", "margin-left": "10mm", "margin-right": "10mm"})
+	"""One page set as PDF bytes.
+
+	Calls wkhtmltopdf directly (not frappe.utils.pdf.get_pdf) because it needs nothing from the request,
+	so pages can be rendered in parallel threads.
+	"""
+	options = {
+		"page-size": "A4", "orientation": orientation, "margin-top": "12mm", "margin-bottom": "12mm", "margin-left": "10mm",
+		"margin-right": "10mm", "encoding": "UTF-8", "quiet": "", "background": None, "images": None,
+		"disable-javascript": "", "disable-local-file-access": "", "disable-smart-shrinking": "",
+	}  # fmt: skip
+	return pdfkit.from_string(html, False, options=options)

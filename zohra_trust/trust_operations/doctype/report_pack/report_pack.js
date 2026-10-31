@@ -35,9 +35,14 @@ frappe.ui.form.on("Report Pack", {
 				});
 				dialog.fields_dict.body.$wrapper.html(
 					`${warnings}<div class="row"><div class="col-sm-3"><ol class="small">${pages}</ol></div>` +
-						`<div class="col-sm-9"><iframe style="width:100%;height:70vh;border:1px solid #ccc" src="${frm.events.pdf_url(frm)}"></iframe></div></div>`
+						`<div class="col-sm-9" style="position:relative">` +
+						`<div class="pdf-wait text-muted" style="position:absolute;top:0;left:15px;right:15px;height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid #ccc">` +
+						`${__("Building the PDF. This can take up to 20 seconds. Please wait.")}</div>` +
+						`<iframe style="width:100%;height:70vh;border:1px solid #ccc" src="${frm.events.pdf_url(frm)}"></iframe></div></div>`
 				);
 				dialog.show();
+				// the message stays until the browser has the PDF
+				dialog.$wrapper.find("iframe").on("load", () => dialog.$wrapper.find(".pdf-wait").hide());
 			});
 	},
 });

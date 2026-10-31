@@ -1,8 +1,10 @@
 """The Report Pack: generated pages and uploaded pages merged into one PDF, in the order the pack lists."""
 
 import base64
+import hashlib
 import io
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 import frappe
 from frappe import _
@@ -99,23 +101,58 @@ def info(doc):
 	return {"pages": [{"title": i["title"], "kind": i["kind"]} for i in listed], "warnings": warnings}
 
 
+RENDER_WORKERS = 4
+CACHE_SECONDS = 600
+
+
+def source_of(item):
+	"""What one item prints: (kind, html, orientation) for a generated page, or the uploaded file's bytes."""
+	if item["kind"] == "generated":
+		return ("html", item["page"]["html"], item["page"]["orientation"])
+	extension = os.path.splitext(item["file"])[1].lower()
+	content = file_content(item["file"])
+	if extension == ".pdf":
+		return ("pdf", content, None)
+	html, orientation = image_html(content, extension)
+	return ("html", html, orientation)
+
+
+def render_source(source):
+	kind, data, orientation = source
+	return data if kind == "pdf" else to_pdf(data, orientation)
+
+
+def kept(key):
+	return frappe.cache.get_value(key)
+
+
+def keep(key, value):
+	frappe.cache.set_value(key, value, expires_in_sec=CACHE_SECONDS)
+
+
 def pdf_bytes(doc):
-	"""One PDF with every included page. Portrait and landscape pages keep their own size."""
+	"""One PDF with every included page. Portrait and landscape pages keep their own size.
+
+	Pages are rendered in parallel. The merged PDF is kept for ten minutes under a hash of everything it
+	prints, so Download right after Preview is instant and an edit to any record or file makes a new one.
+	"""
 	listed, _warnings = items(doc)
+	sources = [source_of(item) for item in listed]
+	digest = hashlib.sha1()
+	for kind, data, orientation in sources:
+		digest.update(f"{kind}|{orientation}|".encode())
+		digest.update(data if isinstance(data, bytes) else data.encode())
+	key = f"zohra_trust_pack_pdf:{digest.hexdigest()}"
+	cached = kept(key)
+	if cached:
+		return cached
+	with ThreadPoolExecutor(max_workers=RENDER_WORKERS) as pool:
+		parts = list(pool.map(render_source, sources))  # in order
 	writer = PdfWriter()
-	for item in listed:
-		if item["kind"] == "generated":
-			pdf = to_pdf(item["page"]["html"], item["page"]["orientation"])
-		else:
-			extension = os.path.splitext(item["file"])[1].lower()
-			content = file_content(item["file"])
-			if extension == ".pdf":
-				pdf = content
-			else:
-				html, orientation = image_html(content, extension)
-				pdf = to_pdf(html, orientation)
+	for pdf in parts:
 		for pdf_page in PdfReader(io.BytesIO(pdf)).pages:
 			writer.add_page(pdf_page)
 	out = io.BytesIO()
 	writer.write(out)
+	keep(key, out.getvalue())
 	return out.getvalue()
