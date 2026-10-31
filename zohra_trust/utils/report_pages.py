@@ -30,6 +30,7 @@ RECEIPT_ROWS = ("Loan from Zohra trust", "Bank interest", "Govt. grant received"
 # No Food Expenditure Statement or Boarding Attendance is made for these months (spec section 7), so
 # their absence is not a warning.
 UNEXPECTED_MONTHS = ("April", "May")
+FOOD_ROWS = 24  # the filed sheet is numbered to 24; unused rows print blank
 PAYMENT_ROWS = ("Food", "Fuel", "Detergent", "Salaries", "Education", "Miscellaneous", "Transfer to Zohra trust")
 
 
@@ -191,12 +192,12 @@ def food_statement_pages(ctx, from_date, to_date, warnings):
 		doc = frappe.get_doc("Food Expenditure Statement", found[0].name)
 		sanction = get_unit_sanction(ctx.company, doc.period_end)
 		items = [l for l in doc.lines if l.line_type == "Item"]
-		heads = [l for l in doc.lines if l.line_type != "Item"]
+		heads = [l for l in doc.lines if l.line_type != "Item"]  # all amount-only rows print, empty or not, as on the filed sheet
 		pages.append(
 			page(
 				f"food_{year}_{month}", _("Food expenditure statement"), "food_statement", LANDSCAPE, ctx=ctx, doc=doc,
 				strength=sanction.strength if sanction else "", month=month, year=year, items=items,
-				heads=[h for h in heads if flt(h.purchased_amount)],
+				heads=heads, blanks=max(0, FOOD_ROWS - len(items) - len(heads)),
 			)
 		)
 	return pages

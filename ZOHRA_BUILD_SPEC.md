@@ -600,6 +600,7 @@ Open. Ask the product owner before building anything that depends on these:
 - The Mid-term totals per class.
 - The diet scale table, and whether it differs by age or class.
 - The grant bill sample.
+- The filed Receipts and Payments page prints Food ₹5,63,825, but the filed food statements for June to September add up to ₹5,79,598 of food purchases (a gap of ₹15,773; closing cash would be ₹17,904, not the filed ₹33,677). Were some purchases bought on credit and paid later, or is one page wrong?
 - Whether the report filed last March has Food Expenditure Statements for March and April. The October report has statements for June to September only, so it cannot answer this.
 
 Pending, do not build: **Diet scale.** Zohra has said both that no diet scale is prescribed and that one exists from a nutrition board, and is not sure of the table. When a table arrives, the plan is a Diet Scale DocType with a child table of items and quantity per student per day, and a "Fill from diet scale" button on Material Consumption next to Copy yesterday.

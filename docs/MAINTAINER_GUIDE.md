@@ -75,6 +75,10 @@ Demo data: `demo_data.add_report_extras` (letter, officers, staff, Appendix – 
 
 `Report Pack` (company, from and to date, a `pages` table of `Report Pack Page` rows) is the saved half-yearly pack. Each row is a standard section (nine, in filing order) or an `Uploaded page` with a title and a PDF, PNG or JPG file (CA pages, building plan, signed scans). Rows can be dragged to reorder and switched off with Include. `fill_sections()` (button **Standard Pages**) resets the list. `utils/report_pack.py` turns the rows into items (`items`), warnings (`info`) and one merged PDF (`pdf_bytes`, pypdf); images are wrapped in a page and keep portrait or landscape by their shape. `api/report_pack.py` has `pack_info` (the Preview dialog) and `pack_pdf` (Download and the Preview frame); both build from the records at that moment, so there is nothing to refresh. Only System Manager and Principal have Report Pack permissions for now; assign roles when they are decided. The Grant Bill is not in the pack until Zohra sends a sample.
 
+## Slice 6: the filed half year
+
+The food statement page follows the filed sheet: numbered columns 1 to 15, units on quantities, all six amount-only rows always printed, rows numbered to 24, a Total row and column 15 with Opening balance, Monthly purchase, Total, Monthly expenditure and remaining balance. The Receipts page has the Date line and prints "-" for empty payment rows. Known difference from the filed report: see the open question in section 9 of the spec (Food 5,63,825 against 5,79,598).
+
 ## Change request 1
 
 Left with T.C. replaces Leave (patch `rename_leave_to_left_with_tc`). Trust Student has `tc_number` and `tc_date`. Class Exam Marks has `max_marks_per_subject`, reference only. Marks come from the Trust Class data; `setup/seed_classes.py` only creates the first values. Statement old balances come from real stock. No statement is made for April and May. The diet scale is pending and not built.

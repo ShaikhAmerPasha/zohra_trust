@@ -217,11 +217,6 @@ def month_statement(month):
 	doc = {"company": COMPANY, "month": MONTH_NAMES[month], "year": 2026, "is_opening": 1 if month == 6 else 0, "doctype": "Food Expenditure Statement",
 		"__islocal": 1, "name": "new-food-expenditure-statement-1"}  # fmt: skip
 	filled = button("Store", doc, "fill")  # the Fill button
-	if month == 6:  # the first statement: the paper old balances are typed
-		for line in filled["lines"]:
-			if line.get("item_code") in JUNE_OLD:
-				line["old_qty"], line["old_amount"] = JUNE_OLD[line["item_code"]]
-		filled = button("Store", filled, "fill")  # filling again must keep what was typed
 	saved = desk("Store", "Save", filled)
 	statement = desk("Store", "Submit", saved)
 	lines = {l.get("item_code"): l for l in statement["lines"] if l["line_type"] == "Item"}
@@ -260,6 +255,63 @@ def receipts_and_payments():
 	note(total["receipts"] == total["payments"], "R&P receipts total equals payments total", f"{total['receipts']:,.2f} | {total['payments']:,.2f} (filed 18,69,907.84 | 18,69,907)")
 
 
+def cells(row_html):
+	import re
+
+	return [re.sub(r"<[^>]+>", "", c).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", row_html, re.S)]
+
+
+def pack_pages():
+	"""Build the pack pages from the loaded half year and check what they print against the filed figures."""
+	import re
+
+	from zohra_trust.utils.report_pages import build_pages, inr, qty
+
+	pages, warnings = build_pages(COMPANY, "2026-04-01", "2026-09-30")
+	by_key = {p["key"]: p["html"] for p in pages}
+	note(True, "pack: pages built", f"{len(pages)} pages; warnings: {warnings or 'none'}")
+	# Receipts and Payments page
+	html = by_key["receipts_payments"]
+	note("RECEIPTS" in html and "RECIEPTS" not in html, "pack R&P: heading spelt RECEIPTS")
+
+	def value(label, nth=0):
+		found = re.findall(rf'>(?:\d+\) )?{re.escape(label)}</td>\s*<td class="num"[^>]*>(.*?)</td>', html, re.S)
+		return found[nth].strip() if len(found) > nth else None
+
+	for label, nth, want in (("Cash", 0, 682), ("Bank", 0, 634446.84), ("Loan from Zohra trust", 0, 1230000), ("Bank interest", 0, 4779),
+			("Food", 0, 563825), ("Fuel", 0, 37780), ("Detergent", 0, 47400), ("Salaries", 0, 48000), ("Transfer to Zohra trust", 0, 700000),
+			("Cash", 1, 33677), ("Bank", 1, 439225)):  # fmt: skip
+		shown = value(label, nth)
+		ok = shown is not None and abs(float(shown.replace(",", "")) - want) <= (1 if label == "Bank" and nth == 1 else 0.005)
+		note(ok, f"pack R&P page prints {label}" + (" (closing)" if nth else ""), f"page {shown} | filed {inr(want)}")
+	# abstract
+	html = by_key["abstract"]
+	for month in (6, 7, 8, 9):
+		m = re.search(rf'<td>{MONTH_NAMES[month]} 2026</td><td class="num">(.*?)</td>', html)
+		note(bool(m) and m.group(1) == inr(FILED_HOSTEL_DAYS[month]), f"pack abstract page, {MONTH_NAMES[month]} hostel attendance", f"page {m.group(1) if m else None} | filed {inr(FILED_HOSTEL_DAYS[month])}")
+	note("150" in html, "pack abstract page prints sanction strength 150")
+	# food statements
+	for month in (6, 7, 8, 9):
+		name = MONTH_NAMES[month]
+		html = by_key.get(f"food_2026_{name}", "")
+		note(f"Sanctioned Strength-150 Month-{name} Year-2026" in html, f"pack {name} food statement header")
+		rows = {cells(r)[1]: cells(r) for r in re.findall(r"<tr>(.*?)</tr>", html, re.S) if len(cells(r)) >= 14}
+		for item in ITEMS:
+			exp, bq, ba = FILED[month][item]
+			c = rows.get(item)
+			want = (inr(exp) if exp else "", qty(bq), inr(ba) if ba else "")
+			shown = (c[11], c[12].split(" ")[0], c[13]) if c else None  # the balance quantity prints with its unit
+			note(bool(c) and shown == want, f"pack {name} food page, {item}: expenditure, balance qty, balance amount", f"page {shown} | filed {want}")
+		for label, want, tolerance in (("Opening balance", FILED_TOTALS[month][0], 0), ("Monthly purchase", FILED_TOTALS[month][1], 0), ("Total", FILED_TOTALS[month][2], 0),
+				("Monthly expenditure", FILED_TOTALS[month][3], 0), ("remaining balance", FILED_TOTALS[month][4], 0.5 if month == 9 else 0)):  # fmt: skip
+			m = re.search(rf"{label}<br>- ([\d,.]+)</p>", html)
+			shown = float(m.group(1).replace(",", "")) if m else None
+			note(shown is not None and abs(shown - want) <= max(tolerance, 0.005), f"pack {name} food page total {label} (column 15)", f"page {m.group(1) if m else None} | filed {inr(want)}")
+	# the pages that have no figures to match: the registers
+	registers = [p for p in pages if p["key"].startswith("register_")]
+	note(len(registers) == 8, "pack: one attendance register per school and month", f"{len(registers)} registers (4 months x 2 schools)")
+
+
 def run():
 	LINES.clear()
 	try:
@@ -273,6 +325,8 @@ def run():
 			month_statement(month)
 		print("--- Receipts and Payments, 1 April to 30 September 2026")
 		receipts_and_payments()
+		print("--- The pack pages")
+		pack_pages()
 	finally:
 		frappe.set_user("Administrator")
 		frappe.db.rollback()

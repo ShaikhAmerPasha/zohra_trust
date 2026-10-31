@@ -2,6 +2,7 @@
 {% import "zohra_trust/templates/report_pages/letterhead.html" as lh %}
 {% block content %}
 {{ lh.frame_open(ctx) }}
+<div style="text-align:right">Date:</div>
 <h2>{{ ctx.unit_name }}</h2>
 <h3>Receipts and payments account for the period<br>{{ ctx.period }}</h3>
 <table class="grid">
@@ -20,7 +21,7 @@
 		<td style="padding:0">
 			<table class="layout">
 				{% for label, amount in payments %}
-				<tr><td style="padding:3px 5px">{{ loop.index }}) {{ label }}</td><td class="num" style="padding:3px 5px">{{ inr(amount) if amount else "" }}</td></tr>
+				<tr><td style="padding:3px 5px">{{ loop.index }}) {{ label }}</td><td class="num" style="padding:3px 5px">{{ inr(amount) if amount else "-" }}</td></tr>
 				{% endfor %}
 				<tr><td colspan="2" style="padding:3px 5px"><b>Closing balance</b></td></tr>
 				<tr><td style="padding:3px 5px 3px 18px">Cash</td><td class="num" style="padding:3px 5px">{{ inr(closing_cash) }}</td></tr>

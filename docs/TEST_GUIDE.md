@@ -22,7 +22,8 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 | Cancel from the screen (Material Consumption, Cash Bank Voucher) | 5 | 5 | n/a |
 | 4a: generated report pages | 14 | 14 | n/a |
 | 4b: Report Pack, page list, merged PDF | 9 | 9 | n/a |
-| Whole suite now | 79 | 79 | 21/21 including cleanup |
+| 6: the filed half year, pages 2 to 7 | 1 (213 comparisons) | 1 | n/a |
+| Whole suite now | 80 | 80 | 21/21 including cleanup |
 
 ## Slice 1 tests (`tests/test_slice1.py`)
 
@@ -109,6 +110,10 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 - A section with Include off is left out; an uploaded PDF goes in at its row and a wide PNG lands on a landscape page; a missing uploaded file is a warning; a section with no data (August) is reported.
 - The two endpoints return the page list and a PDF response.
 - Data for the report page tests is built by `tests/pack_data.py`.
+
+## Slice 6 test (`tests/test_slice6.py`)
+
+Runs `tests/e2e_filed_half_year.py`: the filed June to September 2026 half year goes in through the desk's own Save, Submit and Fill calls as Principal, Data Entry and Store users (100 synthetic girls; the filed report gives their number, not a roster), then the Receipts and Payments report and the Report Pack pages are compared with the filed figures (213 comparisons: every food statement item line and total, hostel days, the figures printed on the Receipts and Payments page, page headers). Everything is rolled back. Exactly one difference is allowed and pinned: the filed Receipts page shows Food 5,63,825, the filed food statements imply 5,79,598 (gap 15,773, which also moves closing cash from the filed 33,677 to 17,904). Run alone: `bench --site <site> execute zohra_trust.tests.e2e_filed_half_year.run`.
 
 ## Flow check (`tests/flow.py`)
 
