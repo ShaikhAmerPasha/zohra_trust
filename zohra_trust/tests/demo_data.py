@@ -99,7 +99,7 @@ def add_june_purchases():
 	print("June purchases added.")
 
 
-def add_report_extras():
+def add_report_extras(company=COMPANY):
 	"""Letter text, officer bearers, staff and Appendix – H so the report pages have something to print."""
 	settings = frappe.get_doc("Trust Settings")
 	if not settings.officer_bearers:
@@ -114,7 +114,7 @@ def add_report_extras():
 		):
 			settings.append("officer_bearers", {"member_name": name, "designation": designation, "qualification": qualification, "phone": phone, "sort_order": order, "is_active": 1})
 		settings.save()
-	profile = frappe.get_doc("Trust Unit Profile", COMPANY)
+	profile = frappe.get_doc("Trust Unit Profile", company)
 	profile.address = profile.address or "Near Masjid-e-Umar, Old Jewargi Road, Kalaburagi-585102"
 	profile.letter_text = profile.letter_text or (
 		"<p>To,<br>The District Minority Officer,<br>Kalaburagi</p>"
@@ -130,11 +130,11 @@ def add_report_extras():
 	)
 	profile.save()
 	for name, designation, qualification in (("Najmunnisa", "House Mother", "B.A"), ("Shaenaz", "House Mother", "PUC"), ("Shakeela", "Cook", "10th")):
-		if not frappe.db.exists("Employee", {"employee_name": name, "company": COMPANY}):
+		if not frappe.db.exists("Employee", {"employee_name": name, "company": company}):
 			emp = frappe.get_doc(
 				{
 					"doctype": "Employee", "first_name": name, "gender": "Female", "date_of_birth": "1990-01-01", "date_of_joining": "2020-01-01",
-					"company": COMPANY, "status": "Active", "designation": designation,
+					"company": company, "status": "Active", "designation": designation,
 					"education": [{"qualification": qualification}],
 				}
 			)
@@ -156,30 +156,30 @@ def pack_preview(from_date="2026-04-01", to_date="2026-09-30", folder="/tmp"):
 	print(len(pages), "pages;", "warnings:", warnings)
 
 
-def setup_site():
+def setup_site(company=COMPANY, abbr=ABBR):
 	"""An empty hostel: fiscal year, academic years, schools, classes, the unit and its opening cash and bank. No girls, no stock."""
 	if not frappe.db.exists("Fiscal Year", "2025-2026"):
 		frappe.get_doc({"doctype": "Fiscal Year", "year": "2025-2026", "year_start_date": "2025-04-01", "year_end_date": "2026-03-31"}).insert()
 	make_masters()
-	create_unit(COMPANY, ABBR, sanctioned_strength=150, grant_rate=850, effective_from="2026-04-01")
-	if not frappe.db.exists("Journal Entry", {"user_remark": "Opening balances"}):
+	create_unit(company, abbr, sanctioned_strength=150, grant_rate=850, effective_from="2026-04-01")
+	if not frappe.db.exists("Journal Entry", {"user_remark": "Opening balances", "company": company}):
 		entry = frappe.get_doc(
 			{
-				"doctype": "Journal Entry", "company": COMPANY, "posting_date": "2026-03-31", "user_remark": "Opening balances",
+				"doctype": "Journal Entry", "company": company, "posting_date": "2026-03-31", "user_remark": "Opening balances",
 				"accounts": [
-					{"account": f"Cash - {ABBR}", "debit_in_account_currency": 50000},
-					{"account": f"Bank - {ABBR}", "debit_in_account_currency": 200000},
-					{"account": f"Temporary Opening - {ABBR}", "credit_in_account_currency": 250000},
+					{"account": f"Cash - {abbr}", "debit_in_account_currency": 50000},
+					{"account": f"Bank - {abbr}", "debit_in_account_currency": 200000},
+					{"account": f"Temporary Opening - {abbr}", "credit_in_account_currency": 250000},
 				],
 			}
 		)
 		entry.insert()
 		entry.submit()
 	frappe.db.commit()
-	print("Empty hostel ready:", COMPANY)
+	print("Empty hostel ready:", company)
 
 
-def add_months(months=(7, 8, 9)):
+def add_months(months=(7, 8, 9), company=COMPANY, abbr=ABBR, rice_rate=50):
 	"""July to September for the hostel set up by setup_site and run through June: purchases, kitchen use, salaries, attendance and food statements.
 
 	The Final result sheet was promoted in the demo before these months, which closed two girls' 2026-27 enrollments. They are
@@ -188,27 +188,27 @@ def add_months(months=(7, 8, 9)):
 	from zohra_trust.tests.helpers import consume, make_attendance, purchase
 	from zohra_trust.utils.dates import MONTHS
 
-	closed = frappe.get_all("Student Enrollment", {"unit": COMPANY, "academic_year": "2026-27", "status": ["in", ["Left", "Completed"]]}, ["name", "status"])
+	closed = frappe.get_all("Student Enrollment", {"unit": company, "academic_year": "2026-27", "status": ["in", ["Left", "Completed"]]}, ["name", "status"])
 	for e in closed:
 		frappe.db.set_value("Student Enrollment", e.name, "status", "Enrolled")
 	try:
 		for m in months:
 			month, stamp = MONTHS[m - 1], f"2026-{m:02d}"
-			purchase(ABBR, COMPANY, f"{stamp}-03", {"Rice": (100, 5000), "Sugar": (10, 600)})
-			purchase(ABBR, COMPANY, f"{stamp}-04", {"Vegetables": (1, 2000)}, stock=False)
-			consume(COMPANY, f"{stamp}-15", {"Rice": 45, "Sugar": 5})
-			consume(COMPANY, f"{stamp}-16", {"Rice": 45, "Sugar": 5})
+			purchase(abbr, company, f"{stamp}-03", {"Rice": (100, 100 * rice_rate), "Sugar": (10, 600)})
+			purchase(abbr, company, f"{stamp}-04", {"Vegetables": (1, 2000)}, stock=False)
+			consume(company, f"{stamp}-15", {"Rice": 45, "Sugar": 5})
+			consume(company, f"{stamp}-16", {"Rice": 45, "Sugar": 5})
 			voucher = frappe.get_doc(
-				{"doctype": "Cash Bank Voucher", "company": COMPANY, "voucher_type": "Payment", "posting_date": f"{stamp}-28", "mode": "Cash",
-				 "account_head": f"Salaries - {ABBR}", "amount": 11000, "narration": f"{month} salaries"}
+				{"doctype": "Cash Bank Voucher", "company": company, "voucher_type": "Payment", "posting_date": f"{stamp}-28", "mode": "Cash",
+				 "account_head": f"Salaries - {abbr}", "amount": 11000, "narration": f"{month} salaries"}
 			)
 			voucher.insert()
 			voucher.submit()
-			attendance = make_attendance(COMPANY, month, 2026, working_days=(25, 24))
+			attendance = make_attendance(company, month, 2026, working_days=(25, 24))
 			attendance.fill_rows()
 			attendance.insert()
 			attendance.submit()
-			statement = frappe.get_doc({"doctype": "Food Expenditure Statement", "company": COMPANY, "month": month, "year": 2026, "is_opening": 0})
+			statement = frappe.get_doc({"doctype": "Food Expenditure Statement", "company": company, "month": month, "year": 2026, "is_opening": 0})
 			statement.fill()
 			statement.insert()
 			statement.submit()
