@@ -23,7 +23,8 @@ Run after each slice: the new slice's tests, then the whole suite, so earlier sl
 | 4a: generated report pages | 14 | 14 | n/a |
 | 4b: Report Pack, page list, merged PDF, kept PDF | 10 | 10 | n/a |
 | 6: the filed half year, pages 2 to 7 | 1 (213 comparisons) | 1 | n/a |
-| Whole suite now | 81 | 81 | 21/21 including cleanup |
+| Do-it-yourself workbook numbers (`test_workbook`) | 1 | 1 | n/a |
+| Whole suite now | 82 | 82 | 21/21 including cleanup |
 
 ## Slice 1 tests (`tests/test_slice1.py`)
 
