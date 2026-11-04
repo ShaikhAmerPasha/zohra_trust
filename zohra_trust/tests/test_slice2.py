@@ -272,6 +272,24 @@ class TestConsumption(FrappeTestCase):
 		with self.assertRaises(frappe.DuplicateEntryError):
 			consume(self.company, "2026-06-20", {"Rice": 1})
 
+	def test_same_day_lookup_finds_the_draft_or_the_submitted_document(self):
+		from zohra_trust.api.material_consumption import existing_for_day
+
+		day = "2026-07-20"
+		self.assertIsNone(existing_for_day(self.company, day))
+		draft = frappe.get_doc({"doctype": "Material Consumption", "company": self.company, "posting_date": day, "items": [{"item_code": "Rice", "qty": 1}]}).insert()
+		found = existing_for_day(self.company, day)
+		self.assertEqual((found.name, found.docstatus), (draft.name, 0))  # a draft: the screen opens it
+		draft.submit()
+		found = existing_for_day(self.company, day)
+		self.assertEqual((found.name, found.docstatus), (draft.name, 1))  # submitted: the screen shows a message with a link
+		self.assertIsNone(existing_for_day(self.company, "2026-07-21"))
+		draft.cancel()
+		self.assertIsNone(existing_for_day(self.company, day))  # a cancelled one does not block the day
+		script = open(frappe.get_app_path("zohra_trust", "trust_operations", "doctype", "material_consumption", "material_consumption.js")).read()
+		self.assertIn("existing_for_day", script)
+		self.assertIn("frappe.set_route", script)
+
 	def test_non_statement_item_refused(self):
 		with self.assertRaises(frappe.ValidationError):
 			consume(self.company, "2026-06-25", {"Vegetables": 1})
