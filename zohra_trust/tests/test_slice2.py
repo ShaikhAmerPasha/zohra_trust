@@ -121,6 +121,54 @@ class TestFoodStatement(FrappeTestCase):
 			doc.submit()
 
 
+class TestStatementWarningAndItemDefaults(FrappeTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		cls.company, cls.abbr = "Test Hostel W", "THW"
+		make_unit(cls.company, cls.abbr)
+		seed_stock(cls.abbr, cls.company, "2026-05-31", {"Rice": (100, 4900)})
+
+	def test_every_item_has_its_expense_account_as_item_default(self):
+		from zohra_trust.setup.create_unit import NON_STOCK_ITEMS, STOCK_ITEMS
+
+		expected = {name: account for name, _uom, account in STOCK_ITEMS}
+		expected.update({name: name for name in NON_STOCK_ITEMS})
+		self.assertEqual(len(STOCK_ITEMS), 14)
+		for item, account in expected.items():
+			defaults = frappe.get_all("Item Default", {"parent": item, "company": self.company}, ["expense_account", "default_warehouse"])
+			self.assertEqual(len(defaults), 1, item)
+			self.assertEqual(defaults[0].expense_account, f"{account} - {self.abbr}", item)
+		self.assertEqual(expected["T. Soap"], "Detergent")  # soaps are detergent, everything else on the stock list is food
+		self.assertEqual({a for n, a in expected.items() if n not in ("T. Soap", "W. Soap", *NON_STOCK_ITEMS)}, {"Food"})
+
+	def test_submit_warns_when_the_balance_differs_from_the_stock_at_period_end(self):
+		from unittest import mock
+
+		doc = statement(self.company, "June", is_opening=1)  # Rice balance 100
+		doc.insert()
+		consume(self.company, "2026-06-20", {"Rice": 5})  # stock moves after the statement was filled
+		with mock.patch("zohra_trust.utils.food_statement.frappe.msgprint") as warn:
+			doc.submit()
+		self.assertEqual(doc.docstatus, 1)  # a warning only, never a block
+		text = " ".join(str(c.args[0]) for c in warn.call_args_list)
+		self.assertIn("Rice", text)
+		self.assertIn("differs from stock", text)
+		self.assertTrue(all(c.kwargs.get("indicator") == "orange" for c in warn.call_args_list))
+
+	def test_no_warning_when_the_balance_matches_the_stock(self):
+		from unittest import mock
+
+		c, a = "Test Hostel V", "THV"
+		make_unit(c, a)
+		seed_stock(a, c, "2026-05-31", {"Rice": (10, 500)})
+		doc = statement(c, "June", is_opening=1)
+		doc.insert()
+		with mock.patch("zohra_trust.utils.food_statement.frappe.msgprint") as warn:
+			doc.submit()
+		warn.assert_not_called()
+
+
 class TestSeptemberOpening(FrappeTestCase):
 	def test_september_opening(self):
 		c, a = "Test Hostel D", "THD"

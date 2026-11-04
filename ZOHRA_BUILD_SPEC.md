@@ -495,7 +495,7 @@ Show `guardians` only when `has_guardian` is ticked. Show `leaving_destination` 
 **Helpers**
 - `get_unit_sanction(company, date)`: from Trust Unit Profile.sanctions, the row with `effective_from <= date` and (`effective_to` empty or `>= date`), latest `effective_from` wins. Returns strength, rate and rule. The sanctioned strength is never hard-coded; 150 is only today's value.
 - `assert_period_open(company, date)`: raises if an Accounting Period closes that date. Call it in `validate` of every custom transaction.
-- Correction window: on cancel or amend of a document the user created, refuse if older than `Trust Settings.correction_window_days` unless the user has the Principal role. One `doc_events` hook covers the standard and custom transactions.
+- Correction window: on cancel or amend of a document the user created, refuse if older than `Trust Settings.correction_window_days` unless the user has the Principal role. One `doc_events` hook covers the standard and custom transactions. Exceptions, as built (`utils/correction.py`): (1) owner only: a user who is not the document's owner and not a Principal is refused, whatever its age; (2) the Administrator user is never refused; (3) a Stock Entry or Journal Entry made by a Material Consumption or Cash Bank Voucher (`custom_material_consumption`, `custom_cash_bank_voucher`) follows its parent and is not checked on its own. The window counts days since creation; an empty `correction_window_days` means 1.
 
 **Trust Student.** `home_unit` required. `leaving_date` required unless status is Active.
 
@@ -535,8 +535,8 @@ Show `guardians` only when `has_guardian` is ticked. Show `leaving_destination` 
 - A student who joins mid-year counts from her enrollment date; the grant is still the full monthly rate for her row.
 - The food statement chain skips months freely; a difference between the system stock and the paper is only a warning.
 - A girl with no guardian prints only her name; this is parked.
-- Several users may enter data on the same day. Material Consumption allows one document per company and day, so a second user who opens that day gets the existing draft instead of a duplicate.
-- Users can cancel or amend only their own documents inside the correction window; the Principal can do it for anyone's.
+- Several users may enter data on the same day. Material Consumption allows one document per company and day. A user who picks that company and day on a new form gets the existing draft opened; if it is already submitted, a message links to it and the date is cleared (`api/material_consumption.existing_for_day`).
+- Users can cancel or amend only their own documents inside the correction window; the Principal can do it for anyone's. The Administrator user is also exempt.
 - Student Enrollment has the extra status Planned so Promote can save next year's enrollments without taking effect.
 
 - No statement is made for April and May. April's purchases are bought in March and entered as ordinary Purchase Invoices dated in March, so they fall inside March's statement. The kitchen's daily Material Consumption continues all year, and the old balance of every statement is the real stock at the start of its period.
