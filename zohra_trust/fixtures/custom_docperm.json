@@ -300,5 +300,203 @@
   "role": "Data Entry",
   "permlevel": 0,
   "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-purchase-invoice-principal-40",
+  "parent": "Purchase Invoice",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1,
+  "write": 1,
+  "create": 1,
+  "submit": 1,
+  "cancel": 1,
+  "amend": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-item-principal-41",
+  "parent": "Item",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1,
+  "write": 1,
+  "create": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-stock-entry-principal-42",
+  "parent": "Stock Entry",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1,
+  "cancel": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-gl-entry-principal-43",
+  "parent": "GL Entry",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-journal-entry-principal-44",
+  "parent": "Journal Entry",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-stock-ledger-entry-principal-45",
+  "parent": "Stock Ledger Entry",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-bin-principal-46",
+  "parent": "Bin",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-item-group-principal-47",
+  "parent": "Item Group",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-uom-principal-48",
+  "parent": "UOM",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-warehouse-principal-49",
+  "parent": "Warehouse",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-supplier-principal-50",
+  "parent": "Supplier",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-supplier-group-principal-51",
+  "parent": "Supplier Group",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-account-principal-52",
+  "parent": "Account",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-cost-center-principal-53",
+  "parent": "Cost Center",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-company-principal-54",
+  "parent": "Company",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-mode-of-payment-principal-55",
+  "parent": "Mode of Payment",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-fiscal-year-principal-56",
+  "parent": "Fiscal Year",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-bank-account-principal-57",
+  "parent": "Bank Account",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
+ },
+ {
+  "doctype": "Custom DocPerm",
+  "name": "zt-employee-principal-58",
+  "parent": "Employee",
+  "parenttype": "DocType",
+  "parentfield": "permissions",
+  "role": "Principal",
+  "permlevel": 0,
+  "read": 1
  }
 ]
