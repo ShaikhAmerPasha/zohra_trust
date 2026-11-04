@@ -21,7 +21,7 @@
    "fieldtype": "Select",
    "label": "Designation",
    "in_list_view": 1,
-   "options": "\nPresident\nSecretary\nJoint Secretary\nTrustee"
+   "options": "\nPresident\nSecretary\nJoint Secretary\nMember\nTrustee"
   },
   {
    "fieldname": "qualification",
@@ -32,6 +32,11 @@
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "Phone"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
   },
   {
    "fieldname": "sort_order",
@@ -53,6 +58,7 @@
   "designation",
   "qualification",
   "phone",
+  "address",
   "sort_order",
   "is_active"
  ],

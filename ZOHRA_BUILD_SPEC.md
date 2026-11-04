@@ -157,9 +157,10 @@ Child. Naming: parent: Trust Settings. One officer bearer.
 | Field | Type | Flags | Links to / Notes |
 |---|---|---|---|
 | member_name | Data | R |  |
-| designation | Select |  | President, Secretary, Joint Secretary, Trustee |
-| qualification | Data |  |  |
+| designation | Select |  | President, Secretary, Joint Secretary, Member, Trustee |
+| qualification | Data |  | Printed on the second line of the name on the filed list |
 | phone | Data |  |  |
+| address | Small Text |  | Label Address. Printed in the ADDRESS column of the list |
 | sort_order | Int |  | Order on the letterhead |
 | is_active | Check |  |  |
 
@@ -477,7 +478,7 @@ Transaction (submittable). Naming: RSI-{abbr}-{academic year}-{exam}. One per un
 | Trust Student.leaving_destination, Result Row.leaving_destination | Zohra Trust care, Working women hostel, Other |
 | Student Guardian.relation | Father, Mother, Other |
 | Trust School.medium | English, Kannada |
-| Officer Bearer.designation | President, Secretary, Joint Secretary, Trustee |
+| Officer Bearer.designation | President, Secretary, Joint Secretary, Member, Trustee |
 | Student Enrollment.status | Planned, Enrolled, Left, Completed |
 | Boarding Attendance.month, Food Expenditure Statement.month | January to December |
 | Cash Bank Voucher.voucher_type | Receipt, Payment |
@@ -601,6 +602,11 @@ Open. Ask the product owner before building anything that depends on these:
 - The diet scale table, and whether it differs by age or class.
 - The grant bill sample.
 - The filed Receipts and Payments page prints Food ₹5,63,825, but the filed food statements for June to September add up to ₹5,79,598 of food purchases (a gap of ₹15,773; closing cash would be ₹17,904, not the filed ₹33,677). Were some purchases bought on credit and paid later, or is one page wrong?
+- Filing calendar: the October 2024 to March 2025 report was filed on 28 February 2025 for a period ending 31 March, so the last month appears to be prepared in advance. (Nothing in the app blocks submitting a Boarding Attendance or Food Expenditure Statement before its month ends; no change until the product owner decides.)
+- Whether the March report carries a Result Sheet of Inmates. The October 2024 to March 2025 filing has none.
+- Whether the "School attendance" and "Total" columns of the abstract are filled or left blank. The October 2024 to March 2025 filing fills School attendance; the October 2026 filing left it blank.
+- The receipts and payments page of the October 2024 to March 2025 filing is headed "Zohra Destitute Home for Girls, for one cottage", but its figures match the hostel's statements.
+- The grant received in that filing, 4,61,745, is about 69 percent of 132 x 6 x Rs 850 (6,73,200).
 - Whether the report filed last March has Food Expenditure Statements for March and April. The October report has statements for June to September only, so it cannot answer this.
 
 Pending, do not build: **Diet scale.** Zohra has said both that no diet scale is prescribed and that one exists from a nutrition board, and is not sure of the table. When a table arrives, the plan is a Diet Scale DocType with a child table of items and quantity per student per day, and a "Fill from diet scale" button on Material Consumption next to Copy yesterday.
@@ -612,6 +618,8 @@ The filed report is the department's own form, so its wording is used on screens
 ### 10.1 Page and enclosure names (use exactly)
 
 The letter lists its enclosures as: Appendix – H; List of officer bearer; Boarding attendance; Food expenditure statement; List of staff members; Grant bill; Abstract of boarding and attendance. The other pages are titled: Receipts and payments account for the period; Abstract statement of attendance; List of staff; Result sheet of inmates; and the Kannada-headed School: College attendance register. The filed receipts page prints the typo "RECIEPTS"; print "RECEIPTS" unless told otherwise.
+
+The list of officer bearers is headed LIST OF MEMBERS on the October 2024 to March 2025 filing, with the columns SL.NO, NAME, DESIGNATION, ADDRESS; the name carries the qualification on a second line (for example B.E, M.TECH, Ph.D). Designations used there: President, Secretary, Joint Secretary, Member. The page prints the columns SL.NO, NAME, DESIGNATION, QUALIFICATION, PHONE, ADDRESS.
 
 The unit is written three ways in the report (Minority, Minorities, minority girls' hostel). Use "Zohra Minority Girls Hostel".
 

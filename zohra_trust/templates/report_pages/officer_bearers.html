@@ -5,10 +5,10 @@
 <h2>LIST OF OFFICER BEARER</h2>
 <h3>{{ ctx.unit_name }}</h3>
 <table class="grid">
-	<thead><tr><th>SL.NO</th><th>NAME</th><th>DESIGNATION</th><th>QUALIFICATION</th><th>PHONE</th></tr></thead>
+	<thead><tr><th>SL.NO</th><th>NAME</th><th>DESIGNATION</th><th>QUALIFICATION</th><th>PHONE</th><th>ADDRESS</th></tr></thead>
 	<tbody>
 	{% for o in ctx.officers %}
-		<tr><td class="center">{{ loop.index }}</td><td>{{ o.member_name }}</td><td>{{ o.designation }}</td><td>{{ o.qualification or "" }}</td><td>{{ o.phone or "" }}</td></tr>
+		<tr><td class="center">{{ loop.index }}</td><td>{{ o.member_name }}</td><td>{{ o.designation }}</td><td>{{ o.qualification or "" }}</td><td>{{ o.phone or "" }}</td><td>{{ o.address or "" }}</td></tr>
 	{% endfor %}
 	</tbody>
 </table>
