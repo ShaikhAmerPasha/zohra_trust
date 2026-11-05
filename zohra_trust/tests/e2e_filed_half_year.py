@@ -16,7 +16,7 @@ from zohra_trust.setup.create_unit import create_unit
 from zohra_trust.tests.helpers import SCHOOLS, make_masters
 from zohra_trust.trust_operations.report.receipts_and_payments_account.receipts_and_payments_account import execute as rp_report
 
-COMPANY, ABBR = "Zohra Minority Girls Hostel", "ZMH"
+COMPANY, ABBR = "Filed Half Year Check", "FHC"  # a test company, never the real hostel
 USERS = {"Principal": "e2e.principal@example.com", "Data Entry": "e2e.entry@example.com", "Store": "e2e.store@example.com"}
 STORE = f"Hostel Store - {ABBR}"
 LINES = []
