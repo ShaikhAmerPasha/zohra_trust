@@ -49,7 +49,7 @@ def screen_cancel(doctype, name):
 
 def amend(doc):
 	"""What the Amend button does: a draft copy that points back at the cancelled document, then Submit."""
-	new = frappe.copy_doc(doc, ignore_no_copy=False)  # honours no_copy, as the Amend button does
+	new = frappe.copy_doc(doc, ignore_no_copy=True)  # the Amend button copies every field, even the old Stock Entry or Journal Entry link
 	new.amended_from = doc.name
 	new.docstatus = 0
 	new.insert()

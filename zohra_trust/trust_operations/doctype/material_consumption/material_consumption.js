@@ -36,6 +36,7 @@ frappe.ui.form.on("Material Consumption", {
 			});
 	},
 	refresh(frm) {
+		if (frm.is_new() && frm.doc.amended_from && frm.doc.stock_entry) frm.set_value("stock_entry", "");
 		if (frm.doc.docstatus === 0) {
 			frm.add_custom_button(__("Copy Yesterday"), () => frm.trigger("copy_yesterday"));
 		}
