@@ -7,20 +7,7 @@ SCHOOLS = ("Zohra English Medium", "Zohra Kannada Medium")
 DEFAULT_CLASSES = ("Class 8", "Class 9", "Class 10")  # the classes make_student cycles through; their marks come from seed_classes
 
 
-def make_masters():
-	"""Academic year 2026-27, schools and classes. Safe to call twice."""
-	if not frappe.db.exists("Trust Academic Year", "2026-27"):
-		frappe.get_doc(
-			{"doctype": "Trust Academic Year", "academic_year_name": "2026-27", "start_date": "2026-04-01", "end_date": "2027-03-31"}
-		).insert()
-	if not frappe.db.exists("Trust Academic Year", "2027-28"):
-		frappe.get_doc(
-			{"doctype": "Trust Academic Year", "academic_year_name": "2027-28", "start_date": "2027-04-01", "end_date": "2028-03-31"}
-		).insert()
-	for school, medium in zip(SCHOOLS, ("English", "Kannada")):
-		if not frappe.db.exists("Trust School", school):
-			frappe.get_doc({"doctype": "Trust School", "school_name": school, "medium": medium}).insert()
-	seed_classes()
+from zohra_trust.setup.master_data import make_masters  # noqa: E402,F401
 
 
 def make_unit(company, abbr, strength=150, rate=850):

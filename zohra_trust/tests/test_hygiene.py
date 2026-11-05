@@ -26,3 +26,21 @@ class TestNoNiosOrEmbassy(FrappeTestCase):
 					hits.append(f"{path.relative_to(APP_ROOT)}:{number}: {line.strip()[:80]}")
 		self.assertEqual(hits, [])
 		self.assertTrue((APP_ROOT / "zohra_trust" / "fixtures" / "custom_field.json").exists())  # the scan really reached the fixtures
+
+
+class TestNoChildrensNamesInGit(FrappeTestCase):
+	def test_the_girls_names_are_not_in_any_file_of_the_repo(self):
+		"""The real girls are children: their names live in a private file, never in Git."""
+		private = Path("/home/ameer/zohra_private/girls_2026.csv")
+		if not private.exists():
+			self.skipTest("no private girls file on this machine")
+		import csv
+
+		names = [r["name"] for r in csv.DictReader(private.open(encoding="utf-8"))]
+		hits = []
+		for path in APP_ROOT.rglob("*"):
+			if not path.is_file() or path.suffix.lower() not in SOURCE or SKIP_DIRS & set(path.relative_to(APP_ROOT).parts):
+				continue
+			text = path.read_text(errors="ignore")
+			hits += [f"{path.relative_to(APP_ROOT)}: {n}" for n in names if n in text]
+		self.assertEqual(hits, [])

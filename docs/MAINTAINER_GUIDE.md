@@ -91,6 +91,27 @@ Do these once per unit, before the first Food Expenditure Statement.
 2. Count the physical stock on the last day before the first statement's month and load it as a **Stock Reconciliation** (purpose Opening Stock) dated that day, in the unit's Hostel Store, with a **valuation rate for every item**. Without a valuation rate the opening amounts are zero. Quantities with a valuation rate give old amount = quantity x rate on the first statement; later statements use the previous statement's closing rate.
 3. Enter ordinary Purchase Invoices and Material Consumption as usual. Then make the first Food Expenditure Statement (tick Is Opening, since no earlier statement exists) and click Fill.
 
+## Loading the master data on a new site
+
+After the app is installed and `migrate` has run, load the masters of the Zohra Minority Girls Hostel in one command. It is safe to run again: whatever exists is kept, and texts a user has already typed are not overwritten.
+
+```
+bench --site <site> execute zohra_trust.setup.master_data.load
+```
+
+It creates the academic years 2026-27 and 2027-28, the two schools, the exams and Classes 1 to 10 with their marks, the trust name and officer bearers, the company and its accounts, the store, the items, the unit profile (address, letter text, Appendix – H text, sanction 150 at Rs 850) and the four staff.
+
+Then, as the office needs them:
+
+```
+# the girls, from a CSV with the columns name, class, school (keep this file out of Git)
+bench --site <site> execute zohra_trust.setup.master_data.load_students --kwargs "{'csv_path': '/path/girls.csv'}"
+# cash and bank of the day before the first month, from the paper books
+bench --site <site> execute zohra_trust.setup.master_data.load_opening_balances --kwargs "{'cash': 682, 'bank': 634446.84}"
+```
+
+The opening stock is entered on screen as a Stock Reconciliation with a valuation rate for every item (see Go-live above). The girls are children: never commit their names.
+
 ## Schema repair after migrate
 
 `setup/schema.py` runs on `after_migrate`. An ERPNext patch (`v16_0.migrate_address_contact_custom_fields`) re-creates Custom Fields on Address and Contact; on this older site the columns were not added, so forms that read them failed with "Unknown column". The hook reloads any DocType whose Custom Field has no column (it reads the live table, not Frappe's cached column list). It does nothing when all is well.
