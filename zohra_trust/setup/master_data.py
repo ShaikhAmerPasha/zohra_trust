@@ -115,19 +115,24 @@ def add_staff(company, name, designation, qualification):
 
 def load_students(csv_path, company=COMPANY, academic_year="2026-27", enrollment_date="2026-04-01"):
 	"""Girls from a CSV with the columns name, class, school. Register numbers follow the file order; a girl already in the hostel is skipped."""
-	added = 0
 	with open(csv_path, newline="", encoding="utf-8") as handle:
-		rows = list(csv.DictReader(handle))
+		rows = [(r["name"], int(r["class"]), r["school"]) for r in csv.DictReader(handle)]
+	return add_students(rows, company, academic_year, enrollment_date)
+
+
+def add_students(rows, company=COMPANY, academic_year="2026-27", enrollment_date="2026-04-01"):
+	"""rows: (name, class number, school). Returns how many were added."""
+	added = 0
 	existing = frappe.db.count("Student Enrollment", {"unit": company, "academic_year": academic_year})
-	for n, row in enumerate(rows, existing + 1):
-		name = row["name"].strip()
+	for n, (name, klass, school) in enumerate(rows, existing + 1):
+		name = name.strip()
 		if frappe.db.exists("Trust Student", {"student_name": name, "home_unit": company}):
 			continue
 		student = frappe.get_doc({"doctype": "Trust Student", "student_name": name, "home_unit": company, "admission_date": enrollment_date}).insert()
 		frappe.get_doc(
 			{
-				"doctype": "Student Enrollment", "student": student.name, "academic_year": academic_year, "unit": company, "school": row["school"].strip(),
-				"trust_class": f"Class {int(row['class'])}", "register_sl_no": n, "enrollment_date": enrollment_date, "status": "Enrolled",
+				"doctype": "Student Enrollment", "student": student.name, "academic_year": academic_year, "unit": company, "school": school.strip(),
+				"trust_class": f"Class {int(klass)}", "register_sl_no": n, "enrollment_date": enrollment_date, "status": "Enrolled",
 			}
 		).insert()
 		added += 1

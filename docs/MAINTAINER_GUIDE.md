@@ -112,6 +112,16 @@ bench --site <site> execute zohra_trust.setup.master_data.load_opening_balances 
 
 The opening stock is entered on screen as a Stock Reconciliation with a valuation rate for every item (see Go-live above). The girls are children: never commit their names.
 
+## Test data for the client
+
+On the client's test site (never production), after `master_data.load`:
+
+```
+bench --site <site> execute zohra_trust.setup.client_test_data.load
+```
+
+It adds 50 fictional girls, the opening balances and stock, and the filed June to September 2026 purchases, kitchen use, salaries and trust money. It refuses to run on a hostel that already has girls or entries. The client does the month-end documents by hand and compares with `docs/Zohra_Client_Test_Guide.pdf` (build it again with `docs/build_client_test_pdf.py`). To start again: `client_test_data.remove`, then `load`. `tests/test_client_test_data.py` proves every figure in the guide.
+
 ## Schema repair after migrate
 
 `setup/schema.py` runs on `after_migrate`. An ERPNext patch (`v16_0.migrate_address_contact_custom_fields`) re-creates Custom Fields on Address and Contact; on this older site the columns were not added, so forms that read them failed with "Unknown column". The hook reloads any DocType whose Custom Field has no column (it reads the live table, not Frappe's cached column list). It does nothing when all is well.

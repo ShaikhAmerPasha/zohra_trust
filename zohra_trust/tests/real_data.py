@@ -11,7 +11,7 @@ on screen, so the client sees the Fill buttons work. Figures are the filed June 
 
 import frappe
 
-from zohra_trust.tests.e2e_filed_half_year import JUNE_OLD, MONTHS, MONTH_NAMES
+from zohra_trust.setup.filed_figures import JUNE_OLD
 
 COMPANY, ABBR = "Zohra Minority Girls Hostel", "ZMH"
 DEMO_COMPANIES = ("Demo Hostel", "Demo Hostel Two", "Practice Hostel", "Test Run Hostel", "Flow Demo Hostel")
@@ -101,52 +101,8 @@ def load_masters():
 def load_entries():
 	"""Purchases, kitchen use, salaries and the trust's money movements of June to September 2026."""
 	frappe.flags.in_test = True
-	from zohra_trust.api.material_consumption import copy_yesterday  # noqa: F401  (the same one-per-day rule applies)
+	from zohra_trust.setup import client_test_data
 
-	for month in (6, 7, 8, 9):
-		purchases, consumed, heads = MONTHS[month]
-		date = f"2026-{month:02d}-02"
-		total = sum(a for _q, a in purchases.values())
-		_purchase(date, [{"item_code": i, "qty": q, "rate": a / q, "warehouse": STORE} for i, (q, a) in purchases.items()], total, stock=True)
-		nonstock = {h: a for h, a in heads.items() if h in ("Vegetables", "Mutton", "Fuel")}
-		_purchase(f"2026-{month:02d}-03", [{"item_code": h, "qty": 1, "rate": a} for h, a in nonstock.items()], sum(nonstock.values()), stock=False)
-		_voucher("Payment", "Salaries", heads["Salaries"], f"2026-{month:02d}-05", "Cash", f"{MONTH_NAMES[month]} salaries")
-		first = {i: q // 2 for i, q in consumed.items()}
-		_consume(f"2026-{month:02d}-15", first)
-		_consume(f"2026-{month:02d}-28", {i: consumed[i] - first[i] for i in consumed})
-	for kind, head, amount, date, mode in (
-		("Receipt", "Zohra trust", 730000, "2026-04-05", "Cash"), ("Receipt", "Zohra trust", 500000, "2026-04-06", "Bank"),
-		("Receipt", "Bank interest", 4779, "2026-09-30", "Bank"), ("Payment", "Zohra trust", 700000, "2026-08-20", "Bank"),
-	):
-		_voucher(kind, head, amount, date, mode, "")
+	client_test_data.load_entries(COMPANY, ABBR)
 	frappe.db.commit()
 	print("entries loaded")
-
-
-def _purchase(date, items, total, stock):
-	doc = frappe.get_doc(
-		{
-			"doctype": "Purchase Invoice", "company": COMPANY, "supplier": "Cash purchase", "posting_date": date, "bill_date": date, "set_posting_time": 1,
-			"update_stock": 1 if stock else 0, "set_warehouse": STORE if stock else None, "is_paid": 1, "mode_of_payment": "Cash",
-			"cash_bank_account": f"Cash - {ABBR}", "paid_amount": total, "items": items,
-		}
-	)
-	doc.insert()
-	doc.submit()
-
-
-def _voucher(kind, head, amount, date, mode, narration):
-	doc = frappe.get_doc(
-		{
-			"doctype": "Cash Bank Voucher", "company": COMPANY, "voucher_type": kind, "posting_date": date, "mode": mode,
-			"bank_account": f"{COMPANY} - Hostel Bank" if mode == "Bank" else None, "account_head": f"{head} - {ABBR}", "amount": amount, "narration": narration,
-		}
-	)
-	doc.insert()
-	doc.submit()
-
-
-def _consume(date, quantities):
-	doc = frappe.get_doc({"doctype": "Material Consumption", "company": COMPANY, "posting_date": date, "items": [{"item_code": i, "qty": q} for i, q in quantities.items() if q]})
-	doc.insert()
-	doc.submit()
