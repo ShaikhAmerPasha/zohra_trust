@@ -36,6 +36,18 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "letter_date",
+   "fieldtype": "Date",
+   "label": "Letter date",
+   "description": "Printed on the letter, the receipts and payments page and Appendix – H"
+  },
+  {
+   "fieldname": "place",
+   "fieldtype": "Data",
+   "label": "Place",
+   "description": "Printed on Appendix – H, for example Kalaburagi"
+  },
+  {
    "fieldname": "sb_pages",
    "fieldtype": "Section Break",
    "label": "Pages, in filing order"
@@ -52,6 +64,8 @@
   "company",
   "from_date",
   "to_date",
+  "letter_date",
+  "place",
   "sb_pages",
   "pages"
  ],

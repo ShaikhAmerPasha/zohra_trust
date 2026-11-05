@@ -1,13 +1,13 @@
 {% extends "zohra_trust/templates/report_pages/base.html" %}
 {% block content %}
-<h2>ABSTRACT STATEMENT OF ATTENDANCE FOR ZOHRA MINORITIES GIRLS HOSTEL, GULBARGA</h2>
+<h2 style="text-align:left;margin-bottom:22px">ABSTRACT STATEMENT OF ATTENDANCE FOR ZOHRA MINORITIES GIRLS HOSTEL, GULBARGA</h2>
 <table class="grid">
-	<thead><tr><th>Sl. No.</th><th>Name of the Institution</th><th>Sanction strength</th><th>Month</th><th>Hostel attendance</th><th>School attendance</th><th>Total</th><th>Remarks</th></tr></thead>
+	<thead><tr><th>Sl. No.</th><th>Name of the Institution</th><th>Sanction strength</th><th>Month</th><th>Hostel attendance</th><th>School attendance</th><th>Total</th><th>remarks</th></tr></thead>
 	<tbody>
 	{% for r in rows %}
-		<tr>
-			{% if loop.first %}<td class="center" rowspan="{{ rows|length }}">1</td><td rowspan="{{ rows|length }}">{{ ctx.unit_name }}<br>{{ ctx.address }}</td><td class="center" rowspan="{{ rows|length }}">{{ strength }}</td>{% endif %}
-			<td>{{ r.month }}</td><td class="num">{{ inr(r.total_hostel_days) }}</td><td class="num">{{ inr(r.total_school_days_present) }}</td><td class="num">{{ inr(r.total_hostel_days) }}</td><td></td>
+		<tr style="height:64px">
+			{% if loop.first %}<td rowspan="{{ rows|length }}">1.</td><td rowspan="{{ rows|length }}">{{ ctx.unit_name|title }},<br>{{ ctx.address }}</td><td class="center" rowspan="{{ rows|length }}">{{ strength }}</td>{% endif %}
+			<td>{{ r.month }}</td><td>{{ inr(r.total_hostel_days) }}</td><td></td><td></td><td></td>
 		</tr>
 	{% endfor %}
 	</tbody>

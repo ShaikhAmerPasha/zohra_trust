@@ -73,7 +73,7 @@ def warn_missing(warnings, message, month, year):
 		warnings.append(_(message).format(month, year))
 
 
-def unit_context(company, from_date, to_date):
+def unit_context(company, from_date, to_date, letter_date=None, place=None):
 	profile = frappe.db.get_value(
 		"Trust Unit Profile", company, ["address", "letter_text", "appendix_h_text"], as_dict=True
 	) or frappe._dict()
@@ -91,6 +91,8 @@ def unit_context(company, from_date, to_date):
 		from_date=formatdate(from_date, "dd-mm-yyyy"),
 		to_date=formatdate(to_date, "dd-mm-yyyy"),
 		period=f"{formatdate(from_date, 'dd-mm-yyyy')} to {formatdate(to_date, 'dd-mm-yyyy')}",
+		letter_date=formatdate(letter_date, "dd-mm-yyyy") if letter_date else "",
+		place=place or "",
 	)
 
 
@@ -203,22 +205,35 @@ def food_statement_pages(ctx, from_date, to_date, warnings):
 	return pages
 
 
+def chunks(rows, first, rest):
+	"""Split rows into pages: `first` rows on the first page, `rest` on each later one."""
+	rows = list(rows)
+	pages, start, size = [], 0, first
+	while start < len(rows) or not pages:
+		pages.append(rows[start : start + size])
+		start, size = start + size, rest
+	return pages
+
+
+REGISTER_ROWS_FIRST, REGISTER_ROWS_REST = 19, 22  # as the filed registers: the heading takes room on the first page
+RESULT_ROWS = 22
+
+
 def attendance_register_pages(ctx, from_date, to_date, warnings):
-	"""One register per school and month: the days each girl's school ran and she attended."""
+	"""One register per month listing every girl in the hostel (not one per school), as the filed registers do."""
 	pages = []
 	for month, year in months_between(from_date, to_date):
 		sheet = submitted("Boarding Attendance", {"company": ctx.company, "month": month, "year": year})
 		if not sheet:
 			continue  # the abstract already warned
 		doc = frappe.get_doc("Boarding Attendance", sheet[0].name)
-		for school in sorted({r.school for r in doc.rows if r.school}):
-			rows = [r for r in doc.rows if r.school == school]
-			pages.append(
-				page(
-					f"register_{year}_{month}_{school}", _("School: College attendance register"), "attendance_register", ctx=ctx,
-					school=school, month=month, year=year, rows=rows,
-				)
+		rows = sorted(doc.rows, key=lambda r: r.register_sl_no or 0)
+		pages.append(
+			page(
+				f"register_{year}_{month}", _("School: College attendance register"), "attendance_register", ctx=ctx,
+				month=month, year=year, pages=chunks(rows, REGISTER_ROWS_FIRST, REGISTER_ROWS_REST),
 			)
+		)
 	return pages
 
 
@@ -246,13 +261,13 @@ def result_sheet_page(ctx, to_date, warnings):
 		warnings.append(_("No submitted Result Sheet of Inmates"))
 		return []
 	doc = frappe.get_doc("Result Sheet of Inmates", sheets[0].name)
-	return [page("result_sheet", _("Result sheet of inmates"), "result_sheet", ctx=ctx, doc=doc)]
+	return [page("result_sheet", _("Result sheet of inmates"), "result_sheet", ctx=ctx, doc=doc, pages=chunks(doc.rows, RESULT_ROWS, RESULT_ROWS))]
 
 
-def build_pages(company, from_date, to_date):
+def build_pages(company, from_date, to_date, letter_date=None, place=None):
 	"""All generated pages in filing order, and the warnings."""
 	warnings = []
-	ctx = unit_context(company, from_date, to_date)
+	ctx = unit_context(company, from_date, to_date, letter_date, place)
 	pages = [
 		*letter_page(ctx),
 		*receipts_payments_page(ctx, from_date, to_date),

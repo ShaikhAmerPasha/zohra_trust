@@ -1,15 +1,17 @@
 {% extends "zohra_trust/templates/report_pages/base.html" %}
 {% block content %}
-<h2>RESULT SHEET OF INMATES</h2>
-<h3>{{ ctx.unit_name }}</h3>
+{% for chunk in pages %}
+<div{% if not loop.last %} class="page-break"{% endif %}>
+{% if loop.first %}<h2>RESULT SHEET OF INMATES</h2><h2 style="margin-bottom:18px">{{ ctx.unit_name }}</h2>{% endif %}
 <table class="grid">
-	<thead><tr><th>SL. NO</th><th>NAME &amp; FATHER NAME</th><th>CLASS</th><th>TOTAL MARKS</th><th>MARKS OBTAINED</th><th>RESULT</th></tr></thead>
+	{% if loop.first %}<thead><tr><th>SL. NO</th><th>NAME &amp; FATHER NAME</th><th>CLASS</th><th>TOTAL MARKS</th><th>MARKS OBTAINED</th><th>RESULT</th></tr></thead>{% endif %}
 	<tbody>
-	{% for r in doc.rows %}
-		<tr><td class="center">{{ r.register_sl_no }}.</td><td>{{ r.student_name }}{% if r.guardian_name %} {{ r.guardian_name }}{% endif %}</td>
+	{% for r in chunk %}
+		<tr style="height:40px"><td>{{ r.register_sl_no }}.</td><td>{{ r.student_name }}{% if r.guardian_name %} {{ r.guardian_name }}{% endif %}</td>
 			<td class="center">{{ r.trust_class.replace("Class ", "") }}</td><td class="center">{{ r.max_marks }}</td><td class="center">{{ r.marks_obtained if r.marks_obtained is not none else "" }}</td><td class="center">{{ (r.result or "")|upper }}</td></tr>
 	{% endfor %}
 	</tbody>
 </table>
-<div class="sign">Secretary</div>
+</div>
+{% endfor %}
 {% endblock %}

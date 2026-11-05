@@ -39,7 +39,7 @@ def label(page):
 	if page["key"].startswith("food_"):
 		return f"{page['title']} – {parts[2]} {parts[1]}"
 	if page["key"].startswith("register_"):
-		return f"{page['title']} – {parts[3]}, {parts[2]} {parts[1]}"
+		return f"{page['title']} – {parts[2]} {parts[1]}"
 	return page["title"]
 
 
@@ -77,7 +77,7 @@ def image_html(content, extension):
 
 def items(doc):
 	"""The pack as an ordered list of items (generated or uploaded), and the warnings."""
-	pages, warnings = build_pages(doc.company, doc.from_date, doc.to_date)
+	pages, warnings = build_pages(doc.company, doc.from_date, doc.to_date, doc.get("letter_date"), doc.get("place"))
 	out = []
 	for row in doc.pages:
 		if not row.include:

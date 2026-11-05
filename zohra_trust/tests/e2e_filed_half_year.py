@@ -287,7 +287,7 @@ def pack_pages():
 	# abstract
 	html = by_key["abstract"]
 	for month in (6, 7, 8, 9):
-		m = re.search(rf'<td>{MONTH_NAMES[month]} 2026</td><td class="num">(.*?)</td>', html)
+		m = re.search(rf'<td>{MONTH_NAMES[month]} 2026</td><td>(.*?)</td><td></td><td></td><td></td>', html)  # then School attendance, Total and remarks blank, as filed
 		note(bool(m) and m.group(1) == inr(FILED_HOSTEL_DAYS[month]), f"pack abstract page, {MONTH_NAMES[month]} hostel attendance", f"page {m.group(1) if m else None} | filed {inr(FILED_HOSTEL_DAYS[month])}")
 	note("150" in html, "pack abstract page prints sanction strength 150")
 	# food statements
@@ -309,7 +309,7 @@ def pack_pages():
 			note(shown is not None and abs(shown - want) <= max(tolerance, 0.005), f"pack {name} food page total {label} (column 15)", f"page {m.group(1) if m else None} | filed {inr(want)}")
 	# the pages that have no figures to match: the registers
 	registers = [p for p in pages if p["key"].startswith("register_")]
-	note(len(registers) == 8, "pack: one attendance register per school and month", f"{len(registers)} registers (4 months x 2 schools)")
+	note(len(registers) == 4, "pack: one attendance register per month (all girls)", f"{len(registers)} registers (4 months)")
 
 
 def run():

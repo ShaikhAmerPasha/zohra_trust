@@ -621,6 +621,16 @@ The letter lists its enclosures as: Appendix – H; List of officer bearer; Boar
 
 The list of officer bearers is headed LIST OF MEMBERS on the October 2024 to March 2025 filing, with the columns SL.NO, NAME, DESIGNATION, ADDRESS; the name carries the qualification on a second line (for example B.E, M.TECH, Ph.D). Designations used there: President, Secretary, Joint Secretary, Member. The page prints the columns SL.NO, NAME, DESIGNATION, QUALIFICATION, PHONE, ADDRESS.
 
+Layout decisions taken after comparing the pages with the two filed reports (October 2026 and October 2024 to March 2025), with the product owner:
+
+- Attendance register: one list of every girl in the hostel per month, whatever her school (not one per school); 19 girls on the first page and 22 on each later page, as filed. It signs as "Principal", with no school name.
+- Abstract statement of attendance: the School attendance and Total columns are printed blank.
+- Result sheet of inmates: no signature line (the hostel stamps and signs the printed page); 22 rows a page, the heading and column titles on the first page only.
+- Letter date and place: the Report Pack has two fields, `letter_date` (Date) and `place` (Data). The date prints on the letter, the receipts and payments page and Appendix – H; the place prints on Appendix – H, with the unit name at the bottom left. Nothing is printed when they are empty.
+- List of officer bearer: columns SL.NO, NAME (the qualification on a second line), DESIGNATION, ADDRESS.
+- Letterhead: the trust name, address and registration line centred, and the officer bearers down the left; trustees are marked "Trustee:" above the name, the others show the designation below it.
+- Page sizes are set so tables and type fill an A4 page as on the filed pages.
+
 The unit is written three ways in the report (Minority, Minorities, minority girls' hostel). Use "Zohra Minority Girls Hostel".
 
 ### 10.2 Field labels

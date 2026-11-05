@@ -3,12 +3,12 @@
 {% block content %}
 {{ lh.frame_open(ctx) }}
 <h2>LIST OF STAFF</h2>
-<h3>{{ ctx.unit_name }}</h3>
-<table class="grid">
+<h2>{{ ctx.unit_name }}</h2>
+<table class="grid" style="margin-top:14px">
 	<thead><tr><th>SL.NO</th><th>NAME</th><th>QUALIFICATION</th><th>DESIGNATION</th></tr></thead>
 	<tbody>
 	{% for s in staff %}
-		<tr><td class="center">{{ loop.index }}</td><td>{{ s.employee_name|upper }}</td><td>{{ s.qualification }}</td><td>{{ (s.designation or "")|upper }}</td></tr>
+		<tr><td>{{ loop.index }}</td><td><b>{{ s.employee_name|upper }}</b></td><td><b>{{ s.qualification }}</b></td><td><b>{{ (s.designation or "")|upper }}</b></td></tr>
 	{% endfor %}
 	</tbody>
 </table>

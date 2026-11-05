@@ -1,6 +1,8 @@
 {% extends "zohra_trust/templates/report_pages/base.html" %}
 {% block content %}
-<h2>APPENDIX – H</h2>
 <div>{{ ctx.appendix_h_text }}</div>
-<div class="sign">Secretary</div>
+<table class="layout" style="margin-top:26px"><tr>
+	<td>{% if ctx.letter_date %}Date: {{ ctx.letter_date }}{% endif %}<br>{% if ctx.place %}Place: {{ ctx.place }}{% endif %}</td>
+	<td></td></tr>
+	<tr><td style="padding-top:34px"><b>{{ ctx.unit_name|title }}</b></td><td class="sign" style="margin:0;padding-top:34px">Secretary</td></tr></table>
 {% endblock %}

@@ -64,7 +64,7 @@ class TestReportPack(FrappeTestCase):
 		titles = [p["title"] for p in listed["pages"]]
 		self.assertEqual(len(titles), len(self.generated))
 		self.assertIn("Food expenditure statement – June 2026", titles)
-		self.assertTrue(any(t.startswith("School: College attendance register – Zohra Kannada Medium, July 2026") for t in titles))
+		self.assertTrue(any(t == "School: College attendance register – July 2026" for t in titles))
 		self.assertTrue(any("August 2026" in w for w in listed["warnings"]))
 
 	def test_merged_pdf_has_one_pdf_page_per_page_in_order_and_keeps_landscape(self):

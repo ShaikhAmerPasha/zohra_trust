@@ -106,9 +106,9 @@ class TestReportPages(FrappeTestCase):
 		self.assertIn("HOUSE MOTHER", html)
 		self.assertIn("10th", html)
 
-	def test_register_is_one_page_per_school_and_month_with_kannada_heading(self):
+	def test_register_is_one_list_of_all_girls_per_month_with_kannada_heading(self):
 		registers = [p for p in self.pages if p["key"].startswith("register_")]
-		self.assertEqual(len(registers), 4)  # two months x two schools
+		self.assertEqual(len(registers), 2)  # two months, each listing every girl of the hostel whatever her school
 		html = registers[0]["html"]
 		self.assertIn('<span class="kn">ಶಾಲೆ: ಕಾಲೇಜು ಹಾಜರಾತಿ ನೊಂದಣಿ</span>', html)
 		self.assertIn("School: College attendance register", html)

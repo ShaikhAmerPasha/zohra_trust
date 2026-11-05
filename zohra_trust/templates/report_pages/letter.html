@@ -2,9 +2,10 @@
 {% import "zohra_trust/templates/report_pages/letterhead.html" as lh %}
 {% block content %}
 {{ lh.frame_open(ctx) }}
+<div style="text-align:right">{% if ctx.letter_date %}Date: {{ ctx.letter_date }}{% endif %}</div>
 <div>{{ body }}</div>
 <p><b>Enclosures</b></p>
-<ol>{% for e in enclosures %}<li>{{ e }}</li>{% endfor %}</ol>
+<ol>{% for e in enclosures %}<li><b>{{ e }}</b></li>{% endfor %}</ol>
 <div class="sign">Secretary</div>
 {{ lh.frame_close() }}
 {% endblock %}
