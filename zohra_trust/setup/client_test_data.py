@@ -120,3 +120,19 @@ def remove(company=COMPANY):
 
 	clear_company(company)
 	print(f"{company} removed.")
+
+
+def load_on_migrate():
+	"""Demo branch only: first `bench migrate` after ERPNext setup loads the client test data. Later migrates do nothing."""
+	if not frappe.db.get_single_value("System Settings", "setup_complete"):
+		print("zohra_trust: ERPNext setup wizard not done; client test data not loaded. Run migrate again after it.")
+		return
+	if frappe.db.exists("Company", COMPANY):
+		return
+	try:
+		load(COMPANY, ABBR)
+		frappe.db.commit()
+	except Exception:
+		frappe.db.rollback()
+		frappe.log_error(title="zohra_trust: client test data load failed")
+		print("zohra_trust: client test data load failed; see Error Log.")

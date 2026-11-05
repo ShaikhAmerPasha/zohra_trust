@@ -293,4 +293,7 @@ doc_events = {
 	},
 }
 
-after_migrate = ["zohra_trust.setup.schema.add_missing_custom_field_columns"]
+after_migrate = [
+	"zohra_trust.setup.schema.add_missing_custom_field_columns",
+	"zohra_trust.setup.client_test_data.load_on_migrate",
+]
