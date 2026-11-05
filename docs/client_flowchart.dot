@@ -1,0 +1,42 @@
+digraph G {
+  rankdir=TB; splines=true; nodesep=0.35; ranksep=0.75; pad=0.3; newrank=true;
+  graph [fontname="Liberation Sans", labelloc=t, fontsize=26, label="Zohra Minority Girls Hostel: how the data flows to the report\n", bgcolor=white];
+  node  [shape=box, style="rounded,filled", fontname="Liberation Sans", fontsize=15, margin="0.18,0.1", penwidth=1.4];
+  edge  [color="#555555", penwidth=1.6, arrowsize=0.9, fontname="Liberation Sans", fontsize=13];
+
+  subgraph cluster_a { label="1. SET UP ONCE"; style="rounded,filled"; fillcolor="#eef3fb"; color="#5a72c9"; fontsize=17; fontname="Liberation Sans Bold";
+    TS [label="Trust and officer bearers\n(letterhead on every page)", fillcolor="#dbe5f8"];
+    UP [label="Hostel profile\n(address, letter text, Appendix H)", fillcolor="#dbe5f8"];
+    SF [label="Staff list", fillcolor="#dbe5f8"];
+    ST [label="Girls and their class\n(register number, school)", fillcolor="#dbe5f8"];
+    OS [label="Opening stock, cash and bank\n(on the first day)", fillcolor="#dbe5f8"];
+    {rank=same; TS; UP; SF; ST; OS;}
+  }
+  subgraph cluster_b { label="2. DURING THE MONTH: daily entries"; style="rounded,filled"; fillcolor="#eef7f0"; color="#2e8b57"; fontsize=17; fontname="Liberation Sans Bold";
+    PI [label="Purchase Invoice\nwhat was bought, paid in cash", fillcolor="#d3ecd9"];
+    MC [label="Material Consumption\nwhat the kitchen used today\n[Copy Yesterday]", fillcolor="#d3ecd9"];
+    CV [label="Cash Bank Voucher\nsalaries, trust money, interest", fillcolor="#d3ecd9"];
+    {rank=same; PI; MC; CV;}
+  }
+  subgraph cluster_c { label="3. END OF MONTH: buttons fill these in"; style="rounded,filled"; fillcolor="#fff7e6"; color="#d99a2b"; fontsize=17; fontname="Liberation Sans Bold";
+    BA [label="Boarding Attendance\nhostel and school days\n[Fill Girls]", fillcolor="#fde7b8"];
+    FS [label="Food Expenditure Statement\nopening, purchase, use, balance\n[Fill]", fillcolor="#fde7b8"];
+    RP [label="Receipts and Payments\nread from all the entries", fillcolor="#fde7b8"];
+    {rank=same; BA; FS; RP;}
+  }
+  subgraph cluster_d { label="4. END OF YEAR"; style="rounded,filled"; fillcolor="#fbeeee"; color="#cc4444"; fontsize=17; fontname="Liberation Sans Bold";
+    RS [label="Result Sheet\nmarks of every girl\n[Fill Students]", fillcolor="#f6d0d0"];
+    PR [label="Promote\nnext class, repeat, completed\nor left with T.C.", fillcolor="#f6d0d0"];
+    {rank=same; RS; PR;}
+  }
+  PK [label="REPORT PACK\none button: the whole half-yearly report for the Minority department\n(letterhead, officers, staff list and typed texts are added automatically)", fillcolor="#1b4d3e", fontcolor=white, fontsize=18, penwidth=2.4];
+
+  TS -> UP -> SF -> ST -> OS [style=invis];
+  PI -> MC -> CV [style=invis];
+  TS -> PI [style=invis]; MC -> BA [style=invis];
+  BA -> FS -> RP [style=invis];
+  ST -> BA; OS -> FS;
+  PI -> FS; MC -> FS; CV -> FS; PI -> RP; CV -> RP;
+  BA -> PK; FS -> PK; RP -> PK; RS -> PK;
+  ST -> RS; RS -> PR;
+}
